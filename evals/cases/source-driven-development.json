@@ -1,0 +1,44 @@
+{
+  "skill_name": "source-driven-development",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "实现前对照官方 gRPC 文档验证",
+        "top_k": 3
+      },
+      {
+        "prompt": "我要带官方文档出处的 S3 兼容 API 集成代码",
+        "top_k": 3
+      },
+      {
+        "prompt": "每个框架决策都要以官方文档为准",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "修一下 CI 上不稳定的测试",
+        "owner": "ci-cd-and-automation"
+      },
+      {
+        "prompt": "把规格拆成有序任务",
+        "owner": "planning-and-task-breakdown"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Implement session handling with the framework's recommended approach, citing sources.",
+      "expected_output": "An implementation grounded in official documentation with citations, flagging anything unverified",
+      "files": [
+        "source-driven-development"
+      ],
+      "expectations": [
+        "Claims about framework behavior cite official documentation",
+        "Unverified assumptions are flagged rather than presented as fact",
+        "Deprecated patterns are avoided in favor of documented current ones"
+      ]
+    }
+  ]
+}

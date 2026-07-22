@@ -1,0 +1,45 @@
+{
+  "skill_name": "planning-and-task-breakdown",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "把这份规格拆成带验收标准的小任务",
+        "top_k": 3
+      },
+      {
+        "prompt": "把 PRD 变成可执行的有序任务列表",
+        "top_k": 3
+      },
+      {
+        "prompt": "写代码前把工作规划成可实现的块",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "排查启动时的崩溃",
+        "owner": "debugging-and-error-recovery"
+      },
+      {
+        "prompt": "调 fio 队列深度把这块 NVMe 盘跑满",
+        "owner": "performance-optimization"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Break the attached disk-health monitor spec into an executable plan.",
+      "expected_output": "Ordered tasks in tasks/plan.md, each small, verifiable, with acceptance criteria and dependencies",
+      "files": [
+        "planning-and-task-breakdown"
+      ],
+      "expectations": [
+        "Every task has acceptance criteria",
+        "Tasks are ordered by dependency",
+        "Tasks are vertical slices rather than horizontal layers",
+        "No implementation code is written during planning"
+      ]
+    }
+  ]
+}

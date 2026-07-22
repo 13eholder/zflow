@@ -1,0 +1,48 @@
+{
+  "skill_name": "consistency-and-durability-verification",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "帮我审计写路径，确认客户端收到 ack 后数据一定不会丢",
+        "top_k": 1
+      },
+      {
+        "prompt": "两个副本的数据疑似不一致，该建立什么机制来验证和发现副本发散？",
+        "top_k": 3
+      },
+      {
+        "prompt": "我要改 WAL 的组提交策略，怎么验证崩溃恢复后不会部分应用？",
+        "top_k": 3
+      },
+      {
+        "prompt": "复制协议要加成员变更，上线前怎么系统验证一致性没有被破坏？",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "fio 实测随机读 IOPS 只有盘标称的 30%，帮我分析",
+        "owner": "performance-optimization"
+      },
+      {
+        "prompt": "设计对象存储 PutObject 的公共契约",
+        "owner": "api-and-interface-design"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "我们的元数据服务用 Raft 三副本。客户端说偶尔读到了旧值。帮我系统地验证一致性与持久性承诺是否被守住。",
+      "expected_output": "一套验证方案：先把一致性和持久性承诺写成精确可证伪的陈述（含故障模型），审计写路径各缓存层的持久化语义与 ack 时点，枚举崩溃恢复 kill point 并校验五层恢复契约，建立副本在线对账与离线历史检查（线性一致性思路），并确认端到端校验和覆盖",
+      "expectations": [
+        "先要求把承诺写成精确陈述并标明故障模型，而非直接给修复建议",
+        "审计 ack 时点与各缓存层（应用缓冲、page cache、盘内缓存）的刷盘语义",
+        "包含崩溃恢复点（kill point）枚举与恢复契约校验",
+        "包含副本对账或历史记录线性一致性检查机制",
+        "提到静默损坏的端到端校验和防护"
+      ]
+    }
+  ]
+}

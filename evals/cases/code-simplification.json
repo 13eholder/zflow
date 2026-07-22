@@ -1,0 +1,44 @@
+{
+  "skill_name": "code-simplification",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "这个函数能跑但太炫技了，不改行为简化它",
+        "top_k": 3
+      },
+      {
+        "prompt": "降低这个模块的复杂度，让新人也能维护",
+        "top_k": 3
+      },
+      {
+        "prompt": "清理这段能用的代码，越来越难读懂了",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "给系统加一个功能开关机制"
+      },
+      {
+        "prompt": "诊断一下为什么构建一夜之间挂了",
+        "owner": "debugging-and-error-recovery"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Simplify the provided 80-line function that parses config files, preserving exact behavior.",
+      "expected_output": "A simpler implementation with identical behavior and a summary of what was removed and why",
+      "files": [
+        "code-simplification"
+      ],
+      "expectations": [
+        "Behavior is preserved (tests unchanged and passing, or equivalence argued concretely)",
+        "Complexity is reduced rather than relocated",
+        "The response explains what was removed and why it was safe",
+        "No new features are added during the simplification"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+diff --git a/internal/service/user.go b/internal/service/user.go
+index 1111111..2222222 100644
+--- a/internal/service/user.go
++++ b/internal/service/user.go
+@@ -1,3 +1,15 @@
+ func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.UserResponse, error) {
++func (s *UserService) SearchUsers(ctx context.Context, req *pb.SearchUsersRequest) (*pb.SearchUsersResponse, error) {
++   query := req.GetQuery()
++   rows, err := s.db.QueryContext(ctx,
++       fmt.Sprintf("SELECT id, email, display_name FROM users WHERE email LIKE '%%%s%%'", query),
++   )
++   if err != nil {
++       return nil, err
++   }
++   defer rows.Close()
++   audit.Log(ctx, "search by %s: %s", getUserEmail(ctx), query)
++   return mapRowsToUsers(rows)
++}

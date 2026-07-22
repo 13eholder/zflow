@@ -1,0 +1,45 @@
+{
+  "skill_name": "spec-driven-development",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "写代码前先为新的分层存储功能写规格",
+        "top_k": 3
+      },
+      {
+        "prompt": "为这个项目起草一份带目标和边界的 PRD",
+        "top_k": 3
+      },
+      {
+        "prompt": "我们要做一个新服务，先定义需求",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "跨节点追踪这个请求",
+        "owner": "observability-and-instrumentation"
+      },
+      {
+        "prompt": "把这行炫技代码简化成可读的写法",
+        "owner": "code-simplification"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We want automatic hot/cold data tiering in the storage service. Produce the spec before any implementation.",
+      "expected_output": "A SPEC.md covering objectives, behavior, data model, testing strategy, and explicit boundaries",
+      "files": [
+        "spec-driven-development"
+      ],
+      "expectations": [
+        "The spec includes explicit boundaries and non-goals",
+        "Ambiguities are surfaced as questions rather than silently resolved",
+        "A testing strategy is part of the spec",
+        "No implementation code is written"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "skill_name": "ci-cd-and-automation",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "搭一个 GitHub Actions 流水线，每个 PR 自动跑测试",
+        "top_k": 3
+      },
+      {
+        "prompt": "给流水线加一个带人工审批门禁的部署阶段",
+        "top_k": 3
+      },
+      {
+        "prompt": "把质量门禁自动化，检查不过不许合并",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "重构这个函数让它更易读",
+        "owner": "code-simplification"
+      },
+      {
+        "prompt": "给复制服务加结构化日志",
+        "owner": "observability-and-instrumentation"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a CI pipeline for a Node project: install, lint, test on every PR, and block merge on failure.",
+      "expected_output": "A working workflow definition with correct triggers, steps, and failure behavior",
+      "files": [
+        "ci-cd-and-automation"
+      ],
+      "expectations": [
+        "The workflow triggers on pull requests",
+        "Failure of any quality gate fails the pipeline run",
+        "Steps are ordered logically and cache or setup steps are sane",
+        "No secrets are hardcoded in the workflow"
+      ]
+    }
+  ]
+}

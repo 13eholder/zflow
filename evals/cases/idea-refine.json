@@ -1,0 +1,43 @@
+{
+  "skill_name": "idea-refine",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "我有个做慢盘自动检测的粗略想法，帮我精炼",
+        "top_k": 3
+      },
+      {
+        "prompt": "压测一下我的新集群接入流程方案",
+        "top_k": 3
+      },
+      {
+        "prompt": "头脑风暴一下降低存储集群运维负担的办法",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "修一下挂掉的 CI 流水线",
+        "owner": "ci-cd-and-automation"
+      },
+      {
+        "prompt": "审查快照导入模块的正确性和可读性",
+        "owner": "code-review-and-quality"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Refine this vague idea: 'some kind of tool that helps teams share knowledge better'.",
+      "expected_output": "Sharpening questions, distinct directions, surfaced assumptions, and a one-pager with MVP scope and a Not Doing list",
+      "expectations": [
+        "Sharpening questions are asked before converging",
+        "Hidden assumptions are surfaced explicitly",
+        "The output includes an explicit Not Doing list",
+        "The agent pushes back on weak aspects instead of only agreeing"
+      ]
+    }
+  ]
+}

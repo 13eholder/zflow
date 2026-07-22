@@ -1,0 +1,16 @@
+{
+  "name": "zflow",
+  "description": "Production-grade engineering skills for AI coding agents — covering the full software development lifecycle from spec to ship.",
+  "author": {
+    "name": "Addy Osmani"
+  },
+  "homepage": "https://github.com/13eholder/zflow",
+  "repository": "https://github.com/13eholder/zflow",
+  "license": "MIT",
+  "commands": ["./.claude/commands", "./commands"],
+  "skills": "./skills",
+  "agents": [
+    "./agents/code-reviewer.md",
+    "./agents/test-engineer.md"
+  ]
+}

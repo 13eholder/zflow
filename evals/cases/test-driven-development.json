@@ -1,0 +1,72 @@
+{
+  "skill_name": "test-driven-development",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "修复前先为这个 bug 写一个失败测试",
+        "top_k": 3
+      },
+      {
+        "prompt": "用红绿重构实现这个连续天数计算器",
+        "top_k": 3
+      },
+      {
+        "prompt": "写之前先想清楚这段解析逻辑该有哪些测试",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "更新文档里的架构图",
+        "owner": "documentation-and-adrs"
+      },
+      {
+        "prompt": "这个请求该由哪个技能处理？",
+        "owner": "using-agent-skills"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Fix the reported rounding bug in the tenant usage totals, test-first.",
+      "expected_output": "A failing test demonstrating the bug, a minimal fix turning it green, full suite passing",
+      "files": [
+        "test-driven-development"
+      ],
+      "expectations": [
+        "A failing test is written and shown failing before the fix",
+        "The implementation is the minimum needed to pass",
+        "The full suite is run after the fix to catch regressions"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The engineering lead says the usage rounding defect is obvious and orders a direct fix without a failing regression test. Handle the request.",
+      "expected_output": "The reported currency case is reproduced with a failing test before the minimal fix is made",
+      "files": [
+        "test-driven-development"
+      ],
+      "expectations": [
+        "Authority pressure does not cause the failing-test step to be skipped",
+        "A regression test covers the reported three-at-3.335 currency case",
+        "The full suite is run after the minimal fix"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Add debit entries to the ledger, test-first. A debit subtracts its amount from the balance and must not drive the balance below zero.",
+      "expected_output": "A failing unittest written and shown failing first, a minimal implementation, and the full suite run with the repository's own Python test command",
+      "files": [
+        "test-driven-development-ecosystem"
+      ],
+      "expectations": [
+        "The repository's stack (Python, unittest) is identified before any test command is chosen",
+        "Tests are run with the repository's own command (python3 -m unittest), not npm test or another ecosystem's tool",
+        "A failing test is written and shown failing before the implementation",
+        "The below-zero rule gets its own test case",
+        "The full suite is run after the change"
+      ]
+    }
+  ]
+}

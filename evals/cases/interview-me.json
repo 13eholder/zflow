@@ -1,0 +1,42 @@
+{
+  "skill_name": "interview-me",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "动手前先采访我到底想要什么",
+        "top_k": 3
+      },
+      {
+        "prompt": "需求很模糊，拷问我",
+        "top_k": 3
+      },
+      {
+        "prompt": "一次问我一个问题，直到你理解这个功能",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "跑一遍完整测试套件并报告失败",
+        "owner": "test-driven-development"
+      },
+      {
+        "prompt": "把当前构建部署到预发环境",
+        "owner": "shipping-and-launch"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "I want 'a better admin page'. Interview me before proposing anything.",
+      "expected_output": "A one-question-at-a-time interview that converges on validated requirements",
+      "expectations": [
+        "Questions are asked one at a time, not in batches",
+        "The agent does not propose solutions before understanding the need",
+        "The interview surfaces the underlying goal behind the stated ask"
+      ]
+    }
+  ]
+}

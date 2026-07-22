@@ -1,0 +1,44 @@
+{
+  "skill_name": "context-engineering",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "开始这个重构前应该给 agent 加载哪些上下文？",
+        "top_k": 3
+      },
+      {
+        "prompt": "会话中途模型输出质量下降了，怎么修上下文？",
+        "top_k": 3
+      },
+      {
+        "prompt": "为我的仓库配置规则文件和上下文打包",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "给日期解析器写单元测试",
+        "owner": "test-driven-development"
+      },
+      {
+        "prompt": "定义这个 RPC 接口的请求/响应契约",
+        "owner": "api-and-interface-design"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "An agent session has degraded: responses are generic and it keeps forgetting project conventions. Fix the context setup.",
+      "expected_output": "A diagnosis of the context problem and a concrete loading strategy (rules files, packing, task-scoped context)",
+      "files": [
+        "context-engineering"
+      ],
+      "expectations": [
+        "The response diagnoses probable context causes rather than blaming the model generally",
+        "A specific context-loading plan is produced (what to load, when, and why)",
+        "Context is scoped to the task instead of loading everything"
+      ]
+    }
+  ]
+}

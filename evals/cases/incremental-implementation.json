@@ -1,0 +1,57 @@
+{
+  "skill_name": "incremental-implementation",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "把计划里的下一个任务实现为一个可验证的小切片",
+        "top_k": 3
+      },
+      {
+        "prompt": "分步实现这个功能，每个可用增量提交一次",
+        "top_k": 3
+      },
+      {
+        "prompt": "把这个变更放在功能开关后面薄切片发布",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "新服务应该配哪些告警？",
+        "owner": "observability-and-instrumentation"
+      },
+      {
+        "prompt": "采访我来弄清真实需求",
+        "owner": "interview-me"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Implement CSV export for the reports page, working from the existing task plan.",
+      "expected_output": "The feature delivered in small verified increments with a commit per slice",
+      "files": [
+        "incremental-implementation"
+      ],
+      "expectations": [
+        "Work proceeds in thin vertical slices rather than one large change",
+        "Each slice is verified (tests or build) before the next begins",
+        "Each slice is committed separately"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "A two-day CSV export draft mixes every layer and has no tests, but management says splitting it would waste the sunk effort. Decide how to proceed.",
+      "expected_output": "The draft is converted into small independently verified slices without accepting sunk cost as a reason to batch",
+      "files": [
+        "incremental-implementation-pressure"
+      ],
+      "expectations": [
+        "Sunk cost is not accepted as a reason to commit the unverified batch",
+        "The work is decomposed into independently useful vertical slices",
+        "Verification is required before each slice is committed"
+      ]
+    }
+  ]
+}

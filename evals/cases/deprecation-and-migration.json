@@ -1,0 +1,43 @@
+{
+  "skill_name": "deprecation-and-migration",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "我们要下线 v1 存储 API，规划弃用",
+        "top_k": 3
+      },
+      {
+        "prompt": "把用户平滑迁移出旧的认证系统",
+        "top_k": 3
+      },
+      {
+        "prompt": "怎么安全下线这个旧功能而不影响现有用户？",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "给网关加一个健康检查端点"
+      },
+      {
+        "prompt": "为什么这个测试在 CI 上不稳定？",
+        "owner": "ci-cd-and-automation"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Plan the deprecation of the public v1 storage API with 200 external consumers, replaced by v2.",
+      "expected_output": "A staged deprecation plan: comms, timeline, compatibility window, monitoring, and removal criteria",
+      "files": [
+        "deprecation-and-migration"
+      ],
+      "expectations": [
+        "Consumers are notified with a timeline before any breaking change",
+        "A compatibility or migration window exists with monitoring of remaining usage",
+        "Removal is gated on measured migration, not a calendar date alone"
+      ]
+    }
+  ]
+}

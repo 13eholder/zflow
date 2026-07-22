@@ -1,0 +1,52 @@
+{
+  "skill_name": "performance-optimization",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "存储服务的 p99 延迟突然飙到平均值的 20 倍，帮我定位",
+        "top_k": 1
+      },
+      {
+        "prompt": "fio 实测随机读 IOPS 只有盘标称的 30%，帮我分析是队列深度不够还是有慢盘",
+        "top_k": 3
+      },
+      {
+        "prompt": "写路径吞吐上不去，怀疑每条 WAL 写都 fsync，帮我确认瓶颈并改成组提交",
+        "top_k": 3
+      },
+      {
+        "prompt": "跨节点 RPC 的 p999 间歇性尖峰，怀疑是重试风暴叠加 TCP 重传，帮我抓数据验证",
+        "top_k": 3
+      },
+      {
+        "prompt": "RocksDB 读放大到 8 了，帮我分析原因并收敛",
+        "top_k": 1
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "为 v1 RPC 协议起草废弃公告和迁移时间表",
+        "owner": "deprecation-and-migration"
+      },
+      {
+        "prompt": "设计对象存储 PutObject 的公共契约",
+        "owner": "api-and-interface-design"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "副本落后报表的生成逻辑在 1000 个副本的集群上要跑好几秒。改进它的性能。",
+      "expected_output": "先给出测量基线，再定位到具体瓶颈，做针对性修复，最后用前后数据验证改进",
+      "files": [
+        "performance-optimization"
+      ],
+      "expectations": [
+        "在应用任何优化之前先测量，建立可复现的基线数据",
+        "修复针对测量出的瓶颈（如 O(n^2) 重复排序），而非凭猜测改写",
+        "优化后用同一负载对比前后数据验证改进，且行为未改变"
+      ]
+    }
+  ]
+}

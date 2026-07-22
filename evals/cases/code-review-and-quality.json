@@ -1,0 +1,45 @@
+{
+  "skill_name": "code-review-and-quality",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "合并前帮我审查这个 PR",
+        "top_k": 3
+      },
+      {
+        "prompt": "对这个 diff 做一次正确性和可读性审查",
+        "top_k": 3
+      },
+      {
+        "prompt": "帮我审查另一个模型刚写的改动",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "现在把这个部署到生产",
+        "owner": "shipping-and-launch"
+      },
+      {
+        "prompt": "修复前先为这个 bug 写一个失败测试",
+        "owner": "test-driven-development"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review the provided diff that adds a user-search endpoint. Deliver a structured review.",
+      "expected_output": "A multi-axis review with severity-labelled findings and file:line references",
+      "files": [
+        "code-review-and-quality"
+      ],
+      "expectations": [
+        "Findings cover more than one axis (correctness, readability, architecture, security, performance)",
+        "Every finding carries a severity label from the skill's taxonomy",
+        "Security of user input is explicitly considered for the new endpoint",
+        "The review leads with high-leverage findings rather than nits"
+      ]
+    }
+  ]
+}

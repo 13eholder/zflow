@@ -1,0 +1,69 @@
+description = "通过并行发散到专业角色运行发布前检查清单，然后综合出 go/no-go 决策"
+
+prompt = """
+Invoke the shipping-and-launch skill.
+
+`/ship` is a **fan-out orchestrator**. It runs three specialist personas in parallel against the current change, then merges their reports into a single go/no-go decision with a rollback plan. The personas operate independently — no shared state, no ordering — which is what makes parallel execution safe and useful here.
+
+## Phase A — Parallel fan-out
+
+Spawn three subagents concurrently. The CLI exposes each custom subagent in `agents/` as a tool with the same name — so `code-reviewer.md` becomes a `code-reviewer` tool the main agent can call, and `@code-reviewer` works as an explicit invocation in the prompt. **Issue all three subagent tool calls in a single assistant turn so they execute in parallel** — sequential calls defeat the purpose of this command.
+
+Dispatch each persona by tool name:
+
+1. **`code-reviewer`** — Run a seven-axis review (correctness, concurrency correctness, error-handling completeness, readability, architecture, performance & resource lifecycle) on the staged changes or recent commits. Output the standard review template.
+2. **`test-engineer`** — Analyze test coverage for the change. Identify gaps in happy path, edge cases, error paths, and concurrency scenarios. Output the standard coverage analysis.
+
+If subagents are unavailable in the current CLI version, invoke each persona's system prompt sequentially in the main context and treat their outputs as if returned in parallel — the merge phase still works.
+
+Constraints (from CLI's subagent model):
+- Subagents run in isolated context loops and return only their report to this main session.
+- Do not let one persona delegate to another — keep the fan-out flat.
+- For richer multi-agent collaboration where teammates talk to each other instead of just reporting back, see `references/orchestration-patterns.md`.
+
+**Persona resolution.** If you've defined your own `code-reviewer` or `test-engineer` in `agents/` or your global configuration, those take precedence over this plugin's versions — `/ship` picks up your customizations automatically. This is intentional: plugin subagents sit at the bottom of the CLI's scope priority table, so user-level definitions win by design.
+
+## Phase B — Merge in main context
+
+Once all three reports are back, the main agent (not a sub-persona) synthesizes them:
+
+1. **Code Quality** — Aggregate Critical/Important findings from `code-reviewer` and any failing tests, lint, or build output.
+2. **Performance** — Pull from `code-reviewer`'s performance axis; cross-check p99/p999 latency and capacity headroom.
+3. **Capacity & watermarks** — Verify disk/bandwidth headroom and quota limits (handle directly here).
+4. **Infrastructure** — Env vars, migrations, monitoring, feature flags. Verify directly.
+5. **Documentation** — README, ADRs, changelog. Verify directly.
+
+## Phase C — Decision and rollback
+
+Produce a single output:
+
+```markdown
+## Ship Decision: GO | NO-GO
+
+### Blockers (must fix before ship)
+- [Source persona: Critical finding + file:line]
+
+### Recommended fixes (should fix before ship)
+- [Source persona: Important finding + file:line]
+
+### Acknowledged risks (shipping anyway)
+- [Risk + mitigation]
+
+### Rollback plan
+- Trigger conditions: [what signals would prompt rollback]
+- Rollback procedure: [exact steps]
+- Recovery time objective: [target]
+
+### Specialist reports (full)
+- [code-reviewer report]
+- [test-engineer report]
+```
+
+## Rules
+
+1. The two Phase A personas run in parallel — never sequentially.
+2. Personas do not call each other. The main agent merges in Phase B.
+3. The rollback plan is mandatory before any GO decision.
+4. If any persona returns a Critical finding, the default verdict is NO-GO unless the user explicitly accepts the risk.
+5. **Skip the fan-out only if all of the following are true:** the change touches 2 files or fewer, the diff is under 50 lines, and it does not touch auth, data access, or config/env. Otherwise, default to fan-out. `/ship` is designed for production-bound changes — when the blast radius is non-trivial, run the parallel review even if the diff looks small.
+"""

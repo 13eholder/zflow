@@ -1,0 +1,45 @@
+{
+  "skill_name": "observability-and-instrumentation",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "给副本同步路径加结构化日志和指标，值班现在完全看不出哪个副本落后、落后多少",
+        "top_k": 3
+      },
+      {
+        "prompt": "搭一套跨节点追踪，能跟着一次写请求走完 leader→副本→落盘每一跳",
+        "top_k": 3
+      },
+      {
+        "prompt": "集群里疑似有慢节点和慢盘但定位不到，该补哪些指标和告警？",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "简化这个过度设计的组件",
+        "owner": "code-simplification"
+      },
+      {
+        "prompt": "为新的分层存储功能起草 PRD",
+        "owner": "spec-driven-development"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "为新的副本同步（replica catch-up）功能做仪表化，让值班能够运维它。",
+      "expected_output": "先定义值班要回答的问题，再落地结构化日志、磁盘与链路指标、以及基于症状的告警来回答这些问题",
+      "files": [
+        "observability-and-instrumentation"
+      ],
+      "expectations": [
+        "在添加任何仪表化之前先写下值班工程师要回答的问题",
+        "日志是带关联 ID 和 nodeId/shardId 定位字段的结构化事件，不是散文字符串",
+        "指标避免无界标签基数（如不把对象键、请求 ID 当作 label）",
+        "告警基于症状且可行动（如副本落后字节数、慢盘离群比例），而非原因猜测"
+      ]
+    }
+  ]
+}

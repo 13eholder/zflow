@@ -1,0 +1,42 @@
+{
+  "skill_name": "doubt-driven-development",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "这个改动涉及生产认证，继续前交叉质询每个假设",
+        "top_k": 3
+      },
+      {
+        "prompt": "我对这个方案没把握，用全新上下文对抗性审查我的推理",
+        "top_k": 3
+      },
+      {
+        "prompt": "明天有个高风险迁移，压测一下计划里隐藏的故障模式",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "格式化这个配置文件"
+      },
+      {
+        "prompt": "为这个版本写 changelog"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Before running an irreversible data migration, subject the migration plan to adversarial review.",
+      "expected_output": "Claims extracted, doubts raised against each, reconciliation, and a go or stop verdict",
+      "files": [
+        "doubt-driven-development"
+      ],
+      "expectations": [
+        "Non-trivial claims in the plan are extracted and challenged individually",
+        "At least one assumption is tested rather than accepted",
+        "The verdict distinguishes verified claims from surviving doubts"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "skill_name": "stage",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "为本轮工作创建一个 Stage 文档",
+        "top_k": 3
+      },
+      {
+        "prompt": "封版 Stage 文档，记录应然和实然的差异",
+        "top_k": 3
+      },
+      {
+        "prompt": "开始一个 Stage 来串联这轮变更的所有文档",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "把这个规范拆成任务列表",
+        "owner": "planning-and-task-breakdown"
+      },
+      {
+        "prompt": "为这个 RPC 端点写单元测试",
+        "owner": "test-driven-development"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Create a Stage document for the current round of work that includes a replication protocol optimization.",
+      "expected_output": "A Stage skeleton with type, MISSION, design doc links, implementation plan links, and INDEX.md entry",
+      "expectations": [
+        "Stage type is correctly set (feat/opt/debug/refactor)",
+        "MISSION section includes goal, user, success criteria, constraints, and out of scope",
+        "Implementation plan links to tasks/plan.md and tasks/todo.md",
+        "INDEX.md is updated with the new Stage row",
+        "ADR section is marked as mandatory"
+      ]
+    }
+  ]
+}

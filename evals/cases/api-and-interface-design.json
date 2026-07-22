@@ -1,0 +1,46 @@
+{
+  "skill_name": "api-and-interface-design",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "设计对象存储的 gRPC service：PutObject、GetObject、ListObjects，包含幂等性和错误语义",
+        "top_k": 3
+      },
+      {
+        "prompt": "节点间 RPC 要加一个新字段，滚动升级期间新旧节点怎么兼容？",
+        "top_k": 3
+      },
+      {
+        "prompt": "帮我定义存储引擎读路径的一致性模型（强一致还是读己之写）并写进接口契约",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "单元测试空指针异常，帮我定位",
+        "owner": "debugging-and-error-recovery"
+      },
+      {
+        "prompt": "副本同步最近越来越慢，帮我 profile 并提速",
+        "owner": "performance-optimization"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "设计一个对象存储服务的公共 RPC 契约：写入对象、读取对象、删除对象、列举对象。产出接口契约。",
+      "expected_output": "接口契约包含方法签名、请求/响应结构、幂等性约定、一致性模型和明确的错误语义",
+      "files": [
+        "api-and-interface-design"
+      ],
+      "expectations": [
+        "错误语义明确区分可重试与不可重试，且各方法使用一致的错误结构",
+        "写操作定义了幂等性（幂等键或条件写），客户端重试是安全的",
+        "一致性模型（读己之写、列举的一致性级别）在契约中显式写明",
+        "声明了版本协商或滚动升级兼容策略",
+        "没有擅自发明需求中未陈述的功能"
+      ]
+    }
+  ]
+}
