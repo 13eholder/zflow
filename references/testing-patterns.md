@@ -20,7 +20,7 @@
 ## 测试结构（Arrange-Act-Assert）
 
 ```go
-func TestWAL_ReplayAfterCrash_RestoresCommittedEntries(t *testing.T) {
+func TestWAL_ReplayAfterCrash(t *testing.T) {
     // Arrange：准备前置状态——写入并 fsync 一批已提交条目
     dir := t.TempDir()
     wal, _ := wal.Open(dir)
@@ -43,17 +43,17 @@ func TestWAL_ReplayAfterCrash_RestoresCommittedEntries(t *testing.T) {
 ## 测试命名约定
 
 ```go
-// 模式：Test[单元]_[条件]_[预期行为]
-func TestRaftElection_PartitionedLeader_FollowersElectNewLeader(t *testing.T) {}
-func TestRaftElection_SplitVote_RetriesWithRandomizedTimeout(t *testing.T) {}
-func TestSSTable_ReadAfterCompaction_ReturnsLatestVersion(t *testing.T) {}
-func TestConnectionPool_PeerUnreachable_MarksNodeSuspect(t *testing.T) {}
+// 模式：Test[单元]_[条件]
+func TestRaftElection_PartitionedLeader(t *testing.T) {}
+func TestRaftElection_SplitVote(t *testing.T) {}
+func TestSSTable_ReadAfterCompaction(t *testing.T) {}
+func TestConnectionPool_PeerUnreachable(t *testing.T) {}
 
 // Rust 中同样使用描述性 snake_case
 #[test]
-fn log_truncation_after_snapshot_keeps_invariant() {}
+fn test_log_truncation_after_snapshot() {}
 #[test]
-fn crc_mismatch_on_read_returns_corruption_error_not_garbage() {}
+fn test_crc_mismatch_on_read{}
 ```
 
 ## 常见断言
@@ -143,7 +143,7 @@ Mock 这些：                          不要 Mock 这些：
 
 ```go
 // 在关键操作的不同时间点 kill 进程，验证重启后状态正确
-func TestCommit_KillBetweenWalSyncAndApply_NoDataLoss(t *testing.T) {
+func TestCommit_KillBetweenWalSyncAndApply(t *testing.T) {
     for _, killPoint := range []string{"after_wal_sync", "after_apply", "after_respond"} {
         t.Run(killPoint, func(t *testing.T) {
             node := startNode(t, withKillPoint(killPoint))
@@ -176,7 +176,7 @@ iptables -A OUTPUT -d 10.0.0.3 -j DROP
 测试代码中优先使用可编程代理（Toxiproxy 或在测试内实现的 fault-injecting proxy），而非直接操作宿主机防火墙——可在 CI 容器内运行、可并行、可精确控制故障的开始与结束：
 
 ```go
-func TestCluster_MajorityPartition_OldLeaderStepsDown(t *testing.T) {
+func TestCluster_MajorityPartition(t *testing.T) {
     cluster := NewTestCluster(t, 5)
     leader := cluster.Leader()
     // 将 leader 与多数派隔离
@@ -217,7 +217,7 @@ dmsetup create flakey --table "0 $SECTORS flakey $DEV 0 60 30 1 error_writes"
 // 2. 写返回成功，读回来是垃圾（misdirected/torn write）
 // 3. fsync 返回成功但数据没落盘（盘说谎）
 // 4. I/O 挂起数分钟不返回（慢盘拖垮整个 IO 线程池）
-func TestSSTable_ReadDetectsTornPage_ReturnsCorruption(t *testing.T) {
+func TestSSTable_ReadDetectsTornPage(t *testing.T) {
     dev := &scriptedDevice{corruptPages: map[int64][]byte{4096: garbage(4096)}}
     table := openSSTable(t, dev)
     _, err := table.Get(key)
@@ -229,7 +229,7 @@ func TestSSTable_ReadDetectsTornPage_ReturnsCorruption(t *testing.T) {
 ### 时钟漂移
 
 ```go
-func TestLease_ClockSkew_DoesNotGrantOverlappingLeases(t *testing.T) {
+func TestLease_ClockSkew(t *testing.T) {
     clock := clockwork.NewFakeClock()
     server := NewLeaseServer(clock)
     lease1, _ := server.Grant(5 * time.Second)
@@ -262,7 +262,7 @@ func TestLease_ClockSkew_DoesNotGrantOverlappingLeases(t *testing.T) {
 
 ```rust
 #[test]
-fn crash_recovery_satisfies_durability_contract() {
+fn test_crash_recovery() {
     for point in ["pre_wal", "post_wal_pre_fsync", "post_fsync_pre_manifest", "post_manifest"] {
         let mut sim = CrashSim::new(point);
         let acked = sim.run_workload_until_crash();
@@ -356,7 +356,7 @@ func TestCluster_Soak_2h_UnderMixedWorkload(t *testing.T) {
 
 ```rust
 #[test]
-fn distributed_protocol_never_violates_safety_across_10k_seeds() {
+fn test_distributed_protocol() {
     for seed in 0..10_000 {
         let mut sim = Sim::new(seed); // 同 seed 完全复现
         sim.spawn_nodes(5);
@@ -382,7 +382,7 @@ fn distributed_protocol_never_violates_safety_across_10k_seeds() {
 真实二进制、真实网络（localhost 多实例或容器编排）、真实存储介质的端到端验证。数量要少、覆盖系统级承诺：
 
 ```go
-func TestCluster_RollingUpgrade_PreservesAvailability(t *testing.T) {
+func TestCluster_RollingUpgrade(t *testing.T) {
     cluster := NewBinaryCluster(t, 3, withVersion("v1.4"))
     require.NoError(t, cluster.Start())
     stop := cluster.StartWorkload(t, 100) // 100 ops/s 持续读写
