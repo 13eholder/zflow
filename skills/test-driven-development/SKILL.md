@@ -289,11 +289,11 @@ func TestCreateTask_ValidatesTitle(t *testing.T) {
 ### 描述性命名的测试
 
 ```go
-// 好：读起来像规格
-func TestCompleteTask_SetsStatusToCompletedAndRecordsTimestamp(t *testing.T) { ... }
-func TestCompleteTask_ReturnsNotFoundForMissingTask(t *testing.T) { ... }
-func TestCompleteTask_IsIdempotent_CompletingAlreadyCompletedTaskIsNoOp(t *testing.T) { ... }
-func TestCompleteTask_SendsNotificationToAssignee(t *testing.T) { ... }
+// 好：读起来像规格且简单明了
+func TestCompleteTask_Completed(t *testing.T) { ... }
+func TestCompleteTask_NotFound(t *testing.T) { ... }
+func TestCompleteTask_IsIdempotent(t *testing.T) { ... }
+func TestCompleteTask_SendsNotification(t *testing.T) { ... }
 
 // 坏：模糊的名称
 func TestTaskService(t *testing.T) { ... }
