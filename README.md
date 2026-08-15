@@ -55,31 +55,43 @@ npx skills add 13eholder/zflow --skill test-driven-development   # 红-绿-重�
 偏好原生集成？选择你使用的工具。
 
 <details>
-<summary><b>Claude Code（推荐）</b></summary>
+<summary><b>Oh My Pi(推荐)</b></summary>
+
+**从MarketPlace安装**:
+
+```
+/marketplace add 13eholder/zflow
+/marketplace install --scope=[user|project] zflow@13eholder-zflow
+```
+
+**直接从Github安装**:
+
+```
+omp plugin install github:13eholder/zflow
+omp plugin install https://github.com/13eholder/zflow.git
+```
+
+**从本地克隆仓库安装**:
+
+```bash
+git clone https://github.com/13eholder/zflow.git
+# 将本地目录以项目级符号链接加载（推荐，支持热重载）
+omp install -l ./zflow
+# 直接放入项目本地扩展目录，omp 启动时自动加载
+mkdir -p .omp/extensions
+cp -r ./zflow .omp/extensions/
+# 运行 /reload-plugins 或重启 omp 
+```
+</details>
+
+<details>
+<summary><b>Claude Code</b></summary>
 
 **从 Marketplace 安装：**
 
 ```
 /plugin marketplace add 13eholder/zflow
 /plugin install zflow@13eholder-zflow
-```
-
-> **遇到 SSH 错误？** Marketplace 通过 SSH 克隆仓库。如果你尚未在 GitHub 上设置 SSH 密钥，请先[添加 SSH 密钥](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)，或在 marketplace-add 步骤中使用完整的 HTTPS URL 来强制使用 HTTPS 克隆：
-> ```bash
-> /plugin marketplace add https://github.com/13eholder/zflow.git
-> /plugin install zflow@13eholder-zflow
-> ```
->
-> 如果在 Windows 或 macOS 上 `/plugin install` 仍然因 `git@github.com: Permission denied (publickey)` 而失败，推荐的解决方法是一次性配置 Git，将 GitHub SSH URL 重写为 HTTPS 供子进程克隆使用：
-> ```bash
-> git config --global url."https://github.com/".insteadOf git@github.com:
-> ```
-
-**本地 / 开发环境：**
-
-```bash
-git clone https://github.com/13eholder/zflow.git
-claude --plugin-dir /path/to/zflow
 ```
 
 </details>
