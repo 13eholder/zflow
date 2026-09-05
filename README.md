@@ -41,16 +41,21 @@ npx skills add 13eholder/zflow --skill documentation-and-adrs    # 文档与架�
 偏好原生集成？选择你使用的工具。
 
 <details>
-<summary><b>Oh My Pi(推荐)</b></summary>
+<summary><b>Oh My Pi（首要原生支持）</b></summary>
 
-**从MarketPlace安装**:
+插件仓库内置 OMP 优先的 `.omp-plugin/marketplace.json`，并提供
+`.claude-plugin/marketplace.json` 作为旧版 OMP 的兼容回退。Marketplace
+安装后会自动加载 `hooks/pre/documentation-skill-prompt.ts`，在每次 Agent
+回合前注入文档技能选择提示；普通编码任务仍按需使用技能。
+
+**从 Marketplace 安装**:
 
 ```
 /marketplace add 13eholder/zflow
 /marketplace install --scope=[user|project] zflow@13eholder-zflow
 ```
 
-**直接从Github安装**:
+**直接从 GitHub 安装**:
 
 ```
 omp plugin install github:13eholder/zflow
@@ -61,13 +66,16 @@ omp plugin install https://github.com/13eholder/zflow.git
 
 ```bash
 git clone https://github.com/13eholder/zflow.git
-# 将本地目录以项目级符号链接加载（推荐，支持热重载）
-omp install -l ./zflow
-# 直接放入项目本地扩展目录，omp 启动时自动加载
+# 以项目级符号链接加载（支持热重载）
+omp plugin link ./zflow
+# 或放入项目本地扩展目录，omp 启动时自动加载
 mkdir -p .omp/extensions
 cp -r ./zflow .omp/extensions/
-# 运行 /reload-plugins 或重启 omp 
+# 运行 /reload-plugins；Hook/Extension 变更需重启 omp
 ```
+
+Marketplace 子系统在 OMP 的较新版本中提供；`v0.18.x` 属于尚未包含
+Marketplace 的旧版 pi-coding-agent，无法执行上述 Marketplace 命令。
 </details>
 
 <details>

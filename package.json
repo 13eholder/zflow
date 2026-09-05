@@ -1,0 +1,16 @@
+{
+  "name": "zflow",
+  "version": "2.0.0",
+  "private": true,
+  "description": "面向基础架构工程的生产级 AI 编程技能与 Oh My Pi 工作流。",
+  "omp": {
+    "extensions": [
+      "./hooks/pre/documentation-skill-prompt.ts"
+    ]
+  },
+  "pi": {
+    "extensions": [
+      "./hooks/pre/documentation-skill-prompt.ts"
+    ]
+  }
+}
