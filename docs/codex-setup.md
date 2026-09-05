@@ -1,6 +1,6 @@
 # 在 Codex 中使用 zflow
 
-本仓库也是一个 [Codex 插件](https://developers.openai.com/codex/plugins/build)。Claude Code 使用的同一根级 `skills/` 目录也被 Codex 消费，因此无需复制或重复文件。
+本仓库是一个 [Codex 插件](https://developers.openai.com/codex/plugins/build)，Codex 直接消费根级 `skills/` 目录，无需复制或重复文件。
 
 ## 安装（一条命令）
 
@@ -26,6 +26,6 @@ codex plugin marketplace add /path/to/your/clone
 
 - `.codex-plugin/plugin.json`——仓库根目录下的 Codex 插件清单。将 `skills` 指向 `./skills/` 并声明空的 Codex 钩子配置；zflow 不安装自动会话注入钩子。
 - `.agents/plugins/marketplace.json`——声明仓库根目录（`./`）为插件源的 marketplace 条目。
-- `skills/<name>/SKILL.md`——保持不变。Codex 和 Claude Code 共享相同的 `name` + `description` 前置元数据格式，因此一个文件同时服务于两个平台。
+- `skills/<name>/SKILL.md`——保持不变。每个技能通过 `name` + `description` 前置元数据被 Codex 发现。
 
-`.claude/commands/` 中的斜杠命令和 `agents/` 中的角色保持为 Claude Code 专属——Codex 对两者都没有原生等价物。在 Codex 上，直接调用底层技能而非斜杠命令（例如 `@spec-driven-development` 而非 `/spec`）。
+`agents/` 和 `commands/` 面向其他支持角色或命令的工具；Codex 插件当前只加载 `skills/`。在 Codex 上直接调用底层技能（例如 `@spec-driven-development`）。

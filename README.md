@@ -23,7 +23,7 @@
 
 ## 快速入门
 
-**最快路径——任何智能体，一条命令。** 开放的 [skills CLI](https://github.com/vercel-labs/skills) 可安装到 70 多种智能体中（Claude Code、Cursor、Codex、Copilot、Cline 等）：
+**最快路径——任何智能体，一条命令。** 开放的 [skills CLI](https://github.com/vercel-labs/skills) 可安装到多个智能体中（Cursor、Codex、Copilot、Cline 等）：
 
 ```bash
 npx skills add 13eholder/zflow            # 安装全部 12 个技能
@@ -68,18 +68,6 @@ mkdir -p .omp/extensions
 cp -r ./zflow .omp/extensions/
 # 运行 /reload-plugins 或重启 omp 
 ```
-</details>
-
-<details>
-<summary><b>Claude Code</b></summary>
-
-**从 Marketplace 安装：**
-
-```
-/plugin marketplace add 13eholder/zflow
-/plugin install zflow@13eholder-zflow
-```
-
 </details>
 
 <details>
@@ -277,8 +265,6 @@ zflow/
 ├── skills/                            # 12 个按需加载的专业技能
 ├── agents/                            # 2 个专业审查角色
 ├── references/                        # 5 个补充检查清单
-├── hooks/                             # 可选的来源缓存钩子
-├── .claude/commands/                  # 3 个 Claude Code 命令
 ├── commands/                          # 3 个 Antigravity CLI 命令
 ├── evals/                             # 每个技能的触发和行为评估
 └── docs/                              # 安装、采纳与贡献指南

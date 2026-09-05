@@ -53,7 +53,7 @@ npx skills add 13eholder/zflow --skill api-and-interface-design
 
 ## 斜杠命令
 
-Claude Code 与 Antigravity 集成只保留三个明确入口：
+当前命令集只保留三个明确入口：
 
 | 命令 | 产物或关卡 |
 |------|------------|

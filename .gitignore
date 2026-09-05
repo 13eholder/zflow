@@ -3,6 +3,5 @@ node_modules/
 .env
 .env.*
 *.log
-.claude/sdd-cache/
 evals/results/
 __pycache__/

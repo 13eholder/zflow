@@ -4,7 +4,7 @@
 
 ### Copilot 指令
 
-Copilot 支持在仓库中使用 `.github/skills`、`.claude/skills` 或 `.agents/skills` 目录创建智能体技能。
+Copilot 支持在仓库中使用 `.github/skills` 或 `.agents/skills` 目录创建智能体技能。
 
 ```bash
 mkdir -p .github/skills/api-and-interface-design .github/skills/observability-and-instrumentation

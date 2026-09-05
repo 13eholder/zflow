@@ -1,12 +1,12 @@
 # AGENTS.md
 
-本文件为 AI 编程智能体（Claude Code、Cursor、Copilot、Antigravity 等）在此仓库中处理代码时提供指导。
+本文件为 AI 编程智能体在此仓库中处理代码时提供指导。
 
 > **适用范围：** 本文件配置的是在 [`13eholder/zflow`](https://github.com/13eholder/zflow) 仓库本身上工作的智能体。它不应被复制到其他项目或全局智能体配置中；可复用资产是 `skills/` 中的技能，而非本文件。
 
 ## 仓库概述
 
-为资深基础架构工程师（分布式系统、存储、网络）打造的面向 Claude.ai 和 Claude Code 的技能集合。技能是打包的指令和脚本，用于扩展 Claude 和你的编程智能体的能力。
+为资深基础架构工程师（分布式系统、存储、网络）打造的技能集合。技能是打包的指令和脚本，用于扩展当前支持的编程智能体能力。
 
 ## OpenCode 集成
 
@@ -45,15 +45,13 @@ OpenCode 从本仓库的 `skills/` 目录发现技能。技能用于补充模型
 
 - **技能**（`skills/<name>/SKILL.md`）——专业领域或明确文档产物的工作流。属于*如何做*。
 - **角色**（`agents/<role>.md`）——具有视角和输出格式的角色。属于*谁来做*。
-- **斜杠命令**（`.claude/commands/*.md`）——面向用户的入口。属于*何时做*。即编排层。
+- **斜杠命令**（`commands/*.toml`）——面向用户的入口。属于*何时做*。即编排层。
 
 组合规则：**用户（或斜杠命令）是编排者。角色不调用其他角色。**
 
 此仓库认可的唯一多角色编排模式是**并行发散并合并**——由 `/ship` 使用，同时运行 `code-reviewer` 和 `test-engineer` 并综合它们的报告。不要构建一个角色路由器。
 
 参见 [docs/agents.md](docs/agents.md) 了解决策矩阵，参见 [references/orchestration-patterns.md](references/orchestration-patterns.md) 了解完整的模式目录。
-
-**Claude Code 互操作：** `agents/` 中的角色可用作 Claude Code 子智能体（从此插件的 `agents/` 目录自动发现）和 Agent Teams 团队成员（在生成时按名称引用）。两个平台约束与我们的规则一致：子智能体不能生成其他子智能体，团队不能嵌套。插件智能体会静默忽略 `hooks`、`mcpServers` 和 `permissionMode` 前置元数据字段。
 
 ## 创建新技能
 

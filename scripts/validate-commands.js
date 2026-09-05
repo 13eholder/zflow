@@ -2,177 +2,65 @@
 /**
  * validate-commands.js
  *
- * Guards against silent drift across the slash-command directories:
- *   .claude/commands/  (.md — Claude Code)
- *   commands/          (.toml — Antigravity CLI)
+ * Validates the supported command manifests in commands/ (.toml).
  *
  * Checks (errors block CI):
- *   - Every command present in one directory exists in both
- *   - The 'description' field is identical across both equivalents
- *
- * What this does NOT check:
- *   Prompt body differences are intentional — each tool has its own
- *   syntax ($ARGUMENTS, agent-skills: prefixes).
+ *   - every command file has a non-empty description field
  *
  * Exit codes: 0 = all clear, 1 = one or more errors
  */
 
 'use strict';
 
-const fs   = require('fs');
+const fs = require('fs');
 const path = require('path');
 
-// ─── Config ───────────────────────────────────────────────────────────────────
-
 const ROOT = path.resolve(__dirname, '..');
-
-const DIRS = {
-  claude:     { dir: path.join(ROOT, '.claude', 'commands'), ext: '.md'   },
-  antigravity:{ dir: path.join(ROOT, 'commands'),            ext: '.toml' },
-};
-
-// Commands where the file stem differs between Claude and the TOML dirs.
-// Key = Claude stem, value = TOML stem.
-const NAME_MAP = {
-  plan: 'planning',
-};
-const NAME_MAP_REVERSE = Object.fromEntries(
-  Object.entries(NAME_MAP).map(([k, v]) => [v, k])
-);
-
-// ─── Parsers ──────────────────────────────────────────────────────────────────
-
-function descriptionFromMd(filePath) {
-  const content = fs.readFileSync(filePath, 'utf8');
-  const match   = content.match(/^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*\r?\n/);
-  if (!match) return null;
-  for (const line of match[1].split(/\r?\n/)) {
-    const colonIdx = line.indexOf(':');
-    if (colonIdx === -1) continue;
-    if (line.slice(0, colonIdx).trim() === 'description') {
-      return line.slice(colonIdx + 1).trim().replace(/^['"]|['"]$/g, '');
-    }
-  }
-  return null;
-}
+const COMMANDS_DIR = path.join(ROOT, 'commands');
 
 function descriptionFromToml(filePath) {
-  const content     = fs.readFileSync(filePath, 'utf8');
+  const content = fs.readFileSync(filePath, 'utf8');
   const doubleMatch = content.match(/^description\s*=\s*"((?:[^"\\]|\\.)*)"/m);
   if (doubleMatch) return doubleMatch[1].replace(/\\"/g, '"');
   const singleMatch = content.match(/^description\s*=\s*'([^']*)'/m);
   return singleMatch ? singleMatch[1] : null;
 }
 
-// ─── Loader ───────────────────────────────────────────────────────────────────
-
-function loadCommands({ dir, ext }) {
-  if (!fs.existsSync(dir)) return {};
+function loadCommands() {
+  if (!fs.existsSync(COMMANDS_DIR)) return {};
   return Object.fromEntries(
-    fs.readdirSync(dir)
-      .filter(f => f.endsWith(ext))
-      .map(f => {
-        const stem = path.basename(f, ext);
-        const full = path.join(dir, f);
+    fs.readdirSync(COMMANDS_DIR)
+      .filter((file) => file.endsWith('.toml'))
+      .map((file) => {
+        const stem = path.basename(file, '.toml');
+        const full = path.join(COMMANDS_DIR, file);
         try {
-          const desc = ext === '.md' ? descriptionFromMd(full) : descriptionFromToml(full);
-          return [stem, desc];
-        } catch (e) {
-          console.log(`  ✗  ${stem} — cannot read file: ${e.message}`);
+          return [stem, descriptionFromToml(full)];
+        } catch (error) {
+          console.log(`  ✗  ${stem} — cannot read file: ${error.message}`);
           return [stem, null];
         }
-      })
+      }),
   );
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
-
 function main() {
-  const byTool = {
-    claude:      loadCommands(DIRS.claude),
-    antigravity: loadCommands(DIRS.antigravity),
-  };
-
-  // Canonical command list: use Claude stems as the reference.
-  // Map each Claude stem to its TOML equivalent for lookup.
-  const claudeStems = Object.keys(byTool.claude).sort();
-  const allTomlStems = new Set([
-    ...Object.keys(byTool.antigravity),
-  ]);
-  const allCanonicalStems = new Set([
-    ...claudeStems,
-    ...[...allTomlStems].map(s => NAME_MAP_REVERSE[s] ?? s),
-  ]);
-
+  const commands = loadCommands();
+  const stems = Object.keys(commands).sort();
   let errors = 0;
 
-  // ── Parity check ────────────────────────────────────────────────────────────
-  console.log('Checking command parity...');
-
-  // Commands in Claude not found in TOML dirs
-  for (const stem of claudeStems) {
-    const tomlStem = NAME_MAP[stem] ?? stem;
-    const missing  = [];
-    if (!(tomlStem in byTool.antigravity)) missing.push('commands');
-    if (missing.length) {
-      console.log(`  ✗  ${stem} — missing in: ${missing.join(', ')}`);
+  console.log('Checking command manifests...');
+  for (const stem of stems) {
+    if (!commands[stem]) {
+      console.log(`  ✗  ${stem} — missing or malformed description`);
       errors++;
     } else {
-      console.log(`  ✓  ${stem}${stem !== tomlStem ? ` (${tomlStem} in toml dirs)` : ''}`);
-    }
-  }
-
-  // Commands in TOML dirs not found in Claude
-  for (const stem of [...allTomlStems].sort()) {
-    const claudeStem = NAME_MAP_REVERSE[stem] ?? stem;
-    if (!(claudeStem in byTool.claude)) {
-      console.log(`  ✗  ${stem} — present in toml dirs but missing in .claude/commands`);
-      errors++;
-    }
-  }
-
-  // ── Description sync check ──────────────────────────────────────────────────
-  console.log('\nChecking description sync...');
-
-  for (const claudeStem of claudeStems) {
-    const tomlStem   = NAME_MAP[claudeStem] ?? claudeStem;
-    const descClaude = byTool.claude[claudeStem];
-    const descAgy    = byTool.antigravity[tomlStem];
-
-    const malformed = [
-      ['.claude/commands', byTool.claude, claudeStem],
-      ['commands/', byTool.antigravity, tomlStem],
-    ].filter(([, commands, stem]) => Object.prototype.hasOwnProperty.call(commands, stem) && commands[stem] == null);
-
-    if (malformed.length) {
-      console.log(`  ✗  ${claudeStem}`);
-      for (const [toolDir, , stem] of malformed) {
-        console.log(`       ${toolDir}/${stem} — missing or malformed description`);
-      }
-      errors++;
-      continue;
-    }
-
-    if (descClaude == null || descAgy == null) {
-      // Missing file already flagged by parity check
-      continue;
-    }
-
-    const allMatch = descClaude === descAgy;
-
-    if (allMatch) {
-      console.log(`  ✓  ${claudeStem}`);
-    } else {
-      console.log(`  ✗  ${claudeStem}`);
-      console.log(`       .claude:      ${descClaude}`);
-      console.log(`       commands/:    ${descAgy}`);
-      errors++;
+      console.log(`  ✓  ${stem}`);
     }
   }
 
   const status = errors > 0 ? 'FAILED' : 'PASSED';
-  console.log(`\n${allCanonicalStems.size} commands checked — ${errors} error(s) — ${status}`);
-
+  console.log(`\n${stems.length} commands checked — ${errors} error(s) — ${status}`);
   if (errors > 0) process.exit(1);
 }
 

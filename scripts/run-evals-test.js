@@ -173,7 +173,7 @@ test('rejects unknown behavioral eval kinds', () => {
   assert.match(result.stdout, /unknown kind "conversation"/);
 });
 
-test('dry-runs a fixtureless dialogue eval', () => {
+test('rejects model-specific behavioral execution', () => {
   const root = makeSandbox();
   writeSkill(root, 'alpha-skill', 'Handles alpha widgets. Use when changing alpha widgets.');
   const evalCase = completeCase('alpha-skill', 'change alpha widget');
@@ -182,8 +182,8 @@ test('dry-runs a fixtureless dialogue eval', () => {
 
   const result = run(root, ['--behavioral', 'alpha-skill', '--dry-run']);
 
-  assert.equal(result.status, 0, result.stdout + result.stderr);
-  assert.match(result.stdout, /dialogue transcript/);
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.match(result.stderr, /behavioral execution is not supported/);
 });
 
 test('enforces the configured rank-1 floor', () => {

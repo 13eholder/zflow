@@ -68,7 +68,7 @@
 
 ## 仓库范围的文件
 
-仓库根目录下的 `AGENTS.md` 和 `CLAUDE.md` 配置的是在 [`13eholder/zflow`](https://github.com/13eholder/zflow) 仓库本身上工作的智能体。在编写设置指南或文档时，不要指导用户将这些文件复制到他们自己的项目或全局智能体配置中；可复用资产是 `skills/` 中的技能。
+仓库根目录下的 `AGENTS.md` 配置的是在 [`13eholder/zflow`](https://github.com/13eholder/zflow) 仓库本身上工作的智能体。在编写设置指南或文档时，不要指导用户将该文件复制到他们自己的项目或全局智能体配置中；可复用资产是 `skills/` 中的技能。
 
 ## 翻译
 
