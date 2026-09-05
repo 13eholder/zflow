@@ -15,7 +15,7 @@ git clone https://github.com/13eholder/zflow.git
 gemini skills install /path/to/zflow/skills/
 ```
 
-只为当前工作区安装时，按你的 Gemini CLI 版本使用工作区作用域选项。安装后运行 `/skills list`，确认 12 个技能均可发现。
+只为当前工作区安装时，按你的 Gemini CLI 版本使用工作区作用域选项。安装后运行 `/skills list`，确认 13 个技能均可发现。
 
 ## GEMINI.md 的用途
 

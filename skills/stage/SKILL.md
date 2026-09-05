@@ -1,6 +1,6 @@
 ---
 name: stage
-description: 创建和管理 Stage 文档——串联一轮工作中的所有技能产出物（MISSION、应然文档、实现计划、实然文档、ADR、验证结果），记录应然与实然的差异及其原因，并在封版时提炼学习摘要。当用户显式请求"创建 Stage""开始一个 Stage""封版 Stage"时使用。Stage 创建完全由用户决定，无自动触发条件。
+description: 创建和管理 Stage 文档——串联一轮工作中的所有技能产出物（MISSION、应然文档、实现计划、Task Contract、实然文档、ADR、验证结果），记录应然与实然的差异及其原因，并在封版时提炼学习摘要。当用户显式请求"创建 Stage""开始一个 Stage""封版 Stage"时使用。Stage 创建完全由用户决定，无自动触发条件。
 ---
 
 # Stage
@@ -9,22 +9,23 @@ description: 创建和管理 Stage 文档——串联一轮工作中的所有技
 
 Stage 是一轮工程变更的**串联文档**——它不是替代任何一个技能产出物，而是记录每个技能产出了什么、这些产出之间是什么关系、以及这一轮变更的完整故事。
 
-Stage 回答三个问题：
+Stage 回答四个问题：
 1. **我们本来要做什么？**（MISSION + 应然文档）
-2. **我们实际做成了什么？**（实然文档 + ADR）
-3. **为什么会有差异？**（应然 vs 实然差异 + 学习摘要）
+2. **实现工作如何被安全委派？**（Task Contract 前向索引）
+3. **我们实际做成了什么？**（实然文档 + ADR）
+4. **为什么会有差异？**（应然 vs 实然差异 + 学习摘要）
 
 ```
                           STAGE.md
                    （串联层 / 索引 + 叙事）
                           │
-    ┌─────────┬─────────┬─┴─────────┬─────────┐
-    │         │         │           │         │
-  MISSION  应然文档   实现计划    实然文档   验证
-  (目标)   (设计)    (plan+todo)  (结果)    (证据)
-                                    │
-                                  ADR
-                              (强制，每个 Stage 至少一篇)
+    ┌────────┬────────┬────┴────┬────────────┬────────┬────────┐
+    │        │             │    │            │        │        │
+  MISSION  应然文档     实现计划  Task Contract  实然文档   验证
+  (目标)   (设计)      (plan+todo) (委派边界)    (结果)    (证据)
+                                                │
+                                              ADR
+                                      (强制，每个 Stage 至少一篇)
 ```
 
 ## 何时使用
@@ -49,6 +50,8 @@ Stage 回答三个问题：
 - 纯文档更新不自动创建
 - Agent 不会根据任务数量或跨模块程度自行判断——必须用户确认
 
+`delegated-task-contract` 需要所属 Stage 时也不得自动触发 Stage 创建；如果尚无 Stage，它必须停下并请求用户显式决定。目录归属、单向索引、状态同步和封版门禁统一遵循 [Stage 与 Task Contract 联动规则](../../references/stage-task-contract-integration.md)。
+
 ## Stage 类型
 
 | 类型 | 动机 | 成功标准 | 应然 vs 实然 | 文档重心 |
@@ -61,13 +64,13 @@ Stage 回答三个问题：
 ## Stage 生命周期
 
 ```
-/plan 输出后               实现过程中                  全部实现完成后              /ship 执行时
-     │                          │                          │                      │
-     ▼                          ▼                          ▼                      ▼
-  创建骨架                  逐任务追加文档               封版 STAGE.md            检查 Stage 存在
-  (MISSION +               (应然文档链接、              (实然文档、ADR、          (pre-launch
-   应然文档路径、            实现计划链接)               差异分析、验证结果、       checklist
-   实现计划链接)                                        学习摘要)                 阻断项)
+/plan 输出后               实现过程中                    全部实现完成后              /ship 执行时
+     │                          │                            │                      │
+     ▼                          ▼                            ▼                      ▼
+  创建骨架                维护文档与 Contract 索引          封版 STAGE.md            检查 Stage 存在
+  (MISSION +              (状态、偏离、证据摘要)           (终态门禁、实然文档、       (pre-launch
+   应然文档路径、                                         ADR、差异分析、          checklist
+   实现计划链接)                                          验证结果、学习摘要)         阻断项)
 ```
 
 ### 创建（骨架阶段）
@@ -82,6 +85,7 @@ Stage 回答三个问题：
    - MISSION（从 spec 中提取）
    - 应然文档路径（标记为 TODO）
    - 实现计划链接（填入 `tasks/plan.md` 和 `tasks/todo.md`）
+   - Task Contracts 前向索引表（初始为空）
    - 实然文档（标记为 TODO——实现完成后填写）
    - ADR（标记为 TODO——每个 Stage 至少一篇，实现完成后填写）
    - 验证结果（标记为 TODO）
@@ -90,19 +94,23 @@ Stage 回答三个问题：
 ### 填充（构建阶段）
 
 在实现过程中：
-- 每完成一个任务，无需修改 STAGE.md
+- 普通任务完成时无需修改 `STAGE.md`；但 Contract 首次落盘、状态变化或返回 deviation / evidence 时必须同步
 - 当应然文档（spec、api-contract）产出时，更新对应链接，去掉 TODO 标记
+- Contract 只由 `STAGE.md` 前向索引；不要在 Contract 中添加 Stage 字段或回链
+- 非 `none` 的 Contract deviation 同步到“应然 vs 实然差异”表，不等到封版时凭记忆补写
 
 ### 封版（完成后）
 
 所有任务完成且验证通过后，Agent 提醒用户封版。用户确认后：
 
-1. 填充实然文档链接（api-doc、ADR）
-2. 填写**应然 vs 实然差异表**（含"是否回溯更新应然文档"列）
-3. 填写验证结果
-4. 提炼**学习摘要**（"下次这样做"和"下次别这样做"）
-5. 状态改为 `done`
-6. 更新 `stages/INDEX.md` 对应行状态
+1. 对照 `task-contract/` 与索引表，确认没有遗漏、失效链接或状态漂移
+2. 确认所有 Contract 正文状态均为 `COMPLETED` 或 `CANCELLED`；任一 `DRAFT`、`READY` 或 `BLOCKED_BY_ARCHITECTURE` 都会阻止封版
+3. 填充实然文档链接（api-doc、ADR）
+4. 填写**应然 vs 实然差异表**（含"是否回溯更新应然文档"列），纳入 Contract 报告的有意义偏离
+5. 填写验证结果并链接 Contract 的 Required Evidence
+6. 提炼**学习摘要**（"下次这样做"和"下次别这样做"）
+7. 状态改为 `done`
+8. 更新 `stages/INDEX.md` 对应行状态
 
 ### 检查（发布前）
 
@@ -167,6 +175,18 @@ Stage 回答三个问题：
 
 ---
 
+## Task Contracts（委派执行边界）
+
+> 仅索引需要 `delegated-task-contract` 门禁的可写委派。Contract 正文、状态和 Required Evidence 以对应文件为准；本表只保存前向链接与摘要，不把 Stage 回链写入 Contract。
+
+| Task | Contract | 状态 | Deviation / Evidence |
+|------|----------|------|----------------------|
+| [Task ID] | [Task ID](./task-contract/TASK-XXX.md) | DRAFT \| READY \| BLOCKED_BY_ARCHITECTURE \| COMPLETED \| CANCELLED | [阻断、偏离、证据或取消原因；无则写 `—`] |
+
+> 尚无 Contract 时保留表头并删除示例行。Contract 首次落盘及每次状态、偏离或证据变化后同步本表。
+
+---
+
 ## 实然文档（我们实际做成了什么样）
 
 > 实现完成后填充本节。
@@ -204,6 +224,8 @@ Stage 回答三个问题：
 ## 应然 vs 实然差异
 
 > 实现完成后填写。记录计划与实际之间的每个有意义的偏离。
+
+Contract 的 `Required Evidence` 报告非 `none` deviation 时，在验收该 Contract 的同时把偏离同步到本表；不要只在 Contract 中留痕。
 
 | 差异 | 应然（计划） | 实然（结果） | 原因 | 是否回溯更新应然文档 |
 |------|------------|------------|------|-------------------|
@@ -333,6 +355,9 @@ stages/
     tasks/
       plan.md                   ← 实现计划
       todo.md                   ← 任务列表
+    task-contract/              ← 委派执行边界，与 tasks/spec 平级
+      TASK-001.md
+      TASK-002.md
     docs/
       protocol/                 ← 实然：协议文档、RPC 接口
       adr/                      ← 实然：架构决策记录（必填）
@@ -345,7 +370,7 @@ stages/
     ...
 ```
 
-> 目录结构是推荐范式，非强制。核心约束只有两条：**STAGE.md 必须存在**，**每个 Stage 至少包含一篇 ADR**。
+> 除 Task Contract 的归属路径外，目录结构是推荐范式。核心约束是：**STAGE.md 必须存在**，**每个 Stage 至少包含一篇 ADR**；如果存在 Task Contract，它必须位于该 Stage 的 `task-contract/` 下并由 `STAGE.md` 前向索引。
 
 ## 与其他技能的交互
 
@@ -353,6 +378,7 @@ stages/
 |------|---------|
 | **spec-driven-development** | Stage 的 MISSION 从 spec 的 Objective 提取 |
 | **planning-and-task-breakdown** | `/plan` 输出后，Agent 询问是否创建 Stage 骨架 |
+| **delegated-task-contract** | Contract 保存到当前 Stage 的 `task-contract/`；`STAGE.md` 单向索引其状态、偏离和证据，Contract 不反向索引 Stage |
 | **api-and-interface-design** | 应然文档中的协议契约（gRPC/protobuf）和实然文档中的接口文档都链接到 Stage |
 | **failure-injection-testing** | 涉及容错与故障恢复时，故障注入方案和混沌实验报告链接到 Stage 实然文档 |
 | **consistency-and-durability-verification** | 涉及存储或状态复制时，一致性/持久性校验报告链接到 Stage 验证结果 |
@@ -382,6 +408,10 @@ stages/
 - INDEX.md 中某行长期处于 `draft` 状态——要么推进实现，要么标记为 `abandoned`，不要让骨架腐烂
 - 增量章节累计 3+ 条但未考虑拆分新 Stage——说明本轮范围判断有误，应反思而非继续追加
 - 决策者字段为空——多人协作时这会导致决策追溯链断裂
+- `task-contract/` 中存在未被 `STAGE.md` 索引的文件，或索引链接指向不存在的 Contract
+- Contract 状态、deviation 或 evidence 已变化，但 Stage 表格仍保留旧摘要
+- Contract 反向链接 `STAGE.md`，导致所属关系被双向维护
+- 仍有 `DRAFT`、`READY` 或 `BLOCKED_BY_ARCHITECTURE` Contract 就把 Stage 标记为 `done`
 
 ## 验证
 
@@ -392,6 +422,7 @@ stages/
 - [ ] 决策者已填写
 - [ ] MISSION 已填写（标准格式或 debug 格式，根据类型选择）
 - [ ] 实现计划链接指向 `tasks/plan.md` 和 `tasks/todo.md`
+- [ ] “Task Contracts（委派执行边界）”章节和空的前向索引表已创建
 - [ ] `stages/INDEX.md` 已追加对应行
 
 封版 Stage 后：
@@ -400,6 +431,9 @@ stages/
 - [ ] 应然 vs 实然差异表已填写（无差异则显式写"无差异"并简要说明原因）
 - [ ] 差异表中每行都标了"是否回溯更新应然文档"
 - [ ] 验证结果表已填写，每个检查项有状态和证据
+- [ ] `task-contract/` 中每份 Contract 都被前向索引，且 Contract 中没有 Stage 字段或回链
+- [ ] 索引镜像状态与 Contract 正文一致，所有 Contract 均为 `COMPLETED` 或 `CANCELLED`
+- [ ] Contract 的 deviation、完成证据和取消原因已同步到对应摘要或差异章节
 - [ ] 学习摘要已填写（两句话，非空泛）
 - [ ] 状态改为 `done`（或其他终态）
 - [ ] `stages/INDEX.md` 对应行状态已同步更新

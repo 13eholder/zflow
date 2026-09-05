@@ -20,7 +20,7 @@ codex plugin marketplace add /path/to/your/clone
 
 ## 使用
 
-安装后，在 Codex 聊天中使用 `@` 调用技能（例如 `@spec-driven-development`），或直接描述专业任务让 Codex 选择合适的技能。`skills/` 下的 12 个技能均可用；普通实现、测试、调试和审查继续使用 Codex 原生工作流。
+安装后，在 Codex 聊天中使用 `@` 调用技能（例如 `@spec-driven-development`），或直接描述专业任务让 Codex 选择合适的技能。`skills/` 下的 13 个技能均可用；普通实现、测试、调试和审查继续使用 Codex 原生工作流。
 
 ## 工作原理
 

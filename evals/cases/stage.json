@@ -29,14 +29,28 @@
     {
       "id": 1,
       "kind": "dialogue",
-      "prompt": "Create a Stage document for the current round of work that includes a replication protocol optimization.",
-      "expected_output": "A Stage skeleton with type, MISSION, design doc links, implementation plan links, and INDEX.md entry",
+      "prompt": "为当前这轮复制协议优化创建一个 Stage 文档。",
+      "expected_output": "包含类型、MISSION、应然文档链接、实现计划链接、Task Contracts 前向索引和 INDEX.md 条目的 Stage 骨架",
       "expectations": [
-        "Stage type is correctly set (feat/opt/debug/refactor)",
-        "MISSION section includes goal, user, success criteria, constraints, and out of scope",
-        "Implementation plan links to tasks/plan.md and tasks/todo.md",
-        "INDEX.md is updated with the new Stage row",
-        "ADR section is marked as mandatory"
+        "Stage 类型被正确设置为 feat/opt/debug/refactor 之一",
+        "MISSION 包含目标、用户、成功标准、约束和非目标",
+        "实现计划链接到 tasks/plan.md 和 tasks/todo.md",
+        "实现计划后包含 Task Contracts（委派执行边界）章节和空的前向索引表",
+        "目录示例把 task-contract/ 放在具体 Stage 内并与 tasks/、spec/ 平级",
+        "INDEX.md 已新增对应 Stage 行",
+        "ADR 章节被标记为必填"
+      ]
+    },
+    {
+      "id": 2,
+      "kind": "dialogue",
+      "prompt": "封版当前 Stage。Task Contracts 表里 TASK-31 是 COMPLETED，但 TASK-32 仍是 READY，task-contract/TASK-32.md 正文也写着 READY。",
+      "expected_output": "拒绝把 Stage 标记为 done，指出 TASK-32 尚未进入 COMPLETED 或 CANCELLED，并保留 Stage 为非终态",
+      "expectations": [
+        "明确把 READY Contract 识别为 Stage 封版阻断项",
+        "不通过只修改 STAGE.md 镜像状态来绕过 Contract 正文",
+        "要求 TASK-32 完成验收后标记 COMPLETED，或在任务确实撤销、替代或转移时记录原因并标记 CANCELLED",
+        "在阻断解除前不会把 Stage 或 stages/INDEX.md 标记为 done"
       ]
     }
   ]

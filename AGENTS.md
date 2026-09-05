@@ -19,6 +19,7 @@ OpenCode 从本仓库的 `skills/` 目录发现技能。技能用于补充模型
 - 默认只加载一个主技能；不要自动串联完整生命周期
 - 用户显式点名技能时，严格遵循该技能
 - 技能位于 `skills/<skill-name>/SKILL.md`
+- 将受既定架构、接口、ownership 或 invariant 约束的可写实现任务委派给 sub-agent 前，必须先唯一确定一个现有 Stage，再使用 `delegated-task-contract` 将 `READY` 契约保存到 `stages/<stage-id>/task-contract/<task-id>.md`、由 `STAGE.md` 前向索引并随任务传递；没有或无法唯一确定 Stage 时暂停委派，请求用户选择或显式创建，不能自动创建 Stage。只读探索、独立审查和无语义选择的机械修改不适用
 
 ### 意图 → 技能映射
 
@@ -33,6 +34,7 @@ OpenCode 从本仓库的 `skills/` 目录发现技能。技能用于补充模型
 - 生产发布、灰度或回滚决策 → `shipping-and-launch`
 - 明确要求规范 → `spec-driven-development`
 - 明确要求持久化实施计划或任务清单 → `planning-and-task-breakdown`
+- 将已批准的 Spec、ADR 或冻结接口下的实现任务委派给可写 sub-agent → `delegated-task-contract`
 - 文档或 ADR → `documentation-and-adrs`
 - 需要官方来源验证 → `source-driven-development`
 - 用户显式要求创建或封版 Stage → `stage`

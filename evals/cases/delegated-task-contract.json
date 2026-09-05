@@ -1,0 +1,64 @@
+{
+  "skill_name": "delegated-task-contract",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "把 TASK-017 分派给编码 sub-agent 之前，请根据已批准的 Spec 和 ADR 创建一份 READY 执行契约，确保 ownership 和 invariant 不被改写。",
+        "top_k": 1
+      },
+      {
+        "prompt": "我要把这个跨模块实现交给另一个智能体。请明确它能改什么、必须信任哪些上游保证、禁止做什么，以及何时必须停止。",
+        "top_k": 3
+      },
+      {
+        "prompt": "在并行分派这些实现切片前，先冻结共享接口语义，并为各智能体创建互不重叠的 Task Contract。",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "把这份产品构想整理成一份有目标、范围和验收标准的功能规格。",
+        "owner": "spec-driven-development"
+      },
+      {
+        "prompt": "把已批准的存储规格拆成按依赖排序的实现任务和检查点。",
+        "owner": "planning-and-task-breakdown"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "execution",
+      "prompt": "根据附件中的仓库规则、现有 Stage、已接受 ADR、已批准 Spec 和 TASK-017，创建达到 READY 状态的委派任务契约并准备发送给可写 sub-agent 的完整文本信封。不要实现 TASK-017。",
+      "expected_output": "在现有 Stage 的 task-contract 目录中持久化一份最小且达到 READY 的 Task Contract，更新 STAGE.md 前向索引，并准备不重复契约正文的分派信封；契约仅授予 TASK-017 所需 Worker 局部权限并保持已验证 timeout 的 ownership 模型",
+      "files": [
+        "delegated-task-contract"
+      ],
+      "expectations": [
+        "唯一解析到现有 Stage 017-worker-lease，并把 Contract 保存为 stages/017-worker-lease/task-contract/TASK-017.md；不创建根级 task-contract 或 tasks/contracts",
+        "Contract 可追溯到 ADR-017、已批准 Spec、仓库规则和 TASK-017，且没有发明新的架构决策",
+        "Preconditions 要求 Worker 智能体信任 ValidatedLeaseTimeout，且不得重复 validation 或 normalization",
+        "Owns 与 Does Not Own 将 Worker 的 timeout 消费和资源清理，同 API validation、Scheduler 透传和公共 API 设计分开",
+        "Allowed 仅包含 Worker 实现和测试；公共 API 修改、新依赖、fallback 和重复 validation 被列入 Ask First 或 Forbidden",
+        "Postconditions、验证命令、Required Evidence 和 Stop Conditions 具体且可验证",
+        "STAGE.md 的 Task Contracts 表新增 TASK-017 前向链接并镜像 READY 状态，但不复制 Contract 正文",
+        "Contract 正文没有 Stage 字段、STAGE.md 链接或其他反向索引",
+        "分派信封包含完整 READY Contract，或给出精确路径并明确要求完整读取",
+        "同一产物不会在独立 Contract 和分派信封之间逐字重复整份契约"
+      ]
+    },
+    {
+      "id": 2,
+      "kind": "dialogue",
+      "prompt": "这里有已批准的 Spec 和 TASK-204，但项目里还没有 Stage。直接生成 READY Contract 并把实现分派给 sub-agent。",
+      "expected_output": "在创建 Contract 和分派实现之前停止，说明 Task Contract 必须归属于用户选定的现有 Stage，并请求用户选择或显式创建 Stage",
+      "expectations": [
+        "不会创建根级 task-contract、tasks/contracts 或任何无归属 Contract",
+        "不会隐式调用 Stage 工作流或自动创建 Stage",
+        "不会发送实现分派，因为 READY 门禁尚未满足",
+        "明确请求用户选择现有 Stage 或显式创建 Stage，并说明选定后的规范路径为 stages/<stage-id>/task-contract/<task-id>.md"
+      ]
+    }
+  ]
+}

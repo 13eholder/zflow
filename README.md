@@ -26,7 +26,7 @@
 **最快路径——任何智能体，一条命令。** 开放的 [skills CLI](https://github.com/vercel-labs/skills) 可安装到多个智能体中（Cursor、Codex、Copilot、Cline 等）：
 
 ```bash
-npx skills add 13eholder/zflow            # 安装全部 12 个技能
+npx skills add 13eholder/zflow            # 安装全部 13 个技能
 npx skills add 13eholder/zflow --list     # 安装前浏览
 ```
 
@@ -174,9 +174,20 @@ Codex 通过 `.codex-plugin/plugin.json` 直接读取根目录下的 `skills/` �
 
 ---
 
-## 全部 12 个技能
+## 全部 13 个技能
 
-### 建议保留的核心能力
+### 文档与明确产物
+
+| 技能                                                                       | 功能                                     | 何时使用                           |
+| -------------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------- |
+| [documentation-and-adrs](skills/documentation-and-adrs/SKILL.md)           | 创建和维护工程文档与 ADR                 | 交付物本身是文档或决策记录时       |
+| [source-driven-development](skills/source-driven-development/SKILL.md)     | 依据官方来源验证框架或库相关决策         | 需要当前、可引用的权威资料时       |
+| [spec-driven-development](skills/spec-driven-development/SKILL.md)         | 生成目标、约束、验收标准与边界明确的规范 | 用户明确需要功能规范时             |
+| [planning-and-task-breakdown](skills/planning-and-task-breakdown/SKILL.md) | 从规范生成依赖排序的实施计划             | 用户明确需要持久化计划或任务清单时 |
+| [delegated-task-contract](skills/delegated-task-contract/SKILL.md)         | 在具体 Stage 内固化子智能体的执行权限与边界 | 委派受架构约束的可写实现任务前     |
+| [stage](skills/stage/SKILL.md)                                             | 串联一轮工作的规范、Contract、ADR、验证与学习摘要 | 用户显式要求创建或封版 Stage 时    |
+
+### 作为拓展的核心能力
 
 | 技能                                                                                               | 功能                                    | 何时使用                         |
 | -------------------------------------------------------------------------------------------------- | --------------------------------------- | -------------------------------- |
@@ -188,15 +199,6 @@ Codex 通过 `.codex-plugin/plugin.json` 直接读取根目录下的 `skills/` �
 | [deprecation-and-migration](skills/deprecation-and-migration/SKILL.md)                             | 兼容窗口、消费者迁移与安全下线          | 移除旧接口、数据结构或功能时     |
 | [shipping-and-launch](skills/shipping-and-launch/SKILL.md)                                         | 上线检查、灰度、容量、回滚和降级预案    | 准备生产发布时                   |
 
-### 文档与明确产物
-
-| 技能                                                                       | 功能                                     | 何时使用                           |
-| -------------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------- |
-| [documentation-and-adrs](skills/documentation-and-adrs/SKILL.md)           | 创建和维护工程文档与 ADR                 | 交付物本身是文档或决策记录时       |
-| [source-driven-development](skills/source-driven-development/SKILL.md)     | 依据官方来源验证框架或库相关决策         | 需要当前、可引用的权威资料时       |
-| [spec-driven-development](skills/spec-driven-development/SKILL.md)         | 生成目标、约束、验收标准与边界明确的规范 | 用户明确需要功能规范时             |
-| [planning-and-task-breakdown](skills/planning-and-task-breakdown/SKILL.md) | 从规范生成依赖排序的实施计划             | 用户明确需要持久化计划或任务清单时 |
-| [stage](skills/stage/SKILL.md)                                             | 串联一轮工作的规范、ADR、验证与学习摘要  | 用户显式要求创建或封版 Stage 时    |
 
 ---
 
@@ -224,6 +226,7 @@ Codex 通过 `.codex-plugin/plugin.json` 直接读取根目录下的 `skills/` �
 | [performance-checklist.md](references/performance-checklist.md)     | 延迟目标、延迟突刺诊断路径、存储/网络/分布式系统检查清单、度量命令   |
 | [observability-checklist.md](references/observability-checklist.md) | 值班问题、结构化日志、RED/USE 指标、追踪、基于症状的告警、发布前关卡 |
 | [orchestration-patterns.md](references/orchestration-patterns.md)   | 经过认可的多角色编排模式、反模式以及"角色不调用角色"规则             |
+| [stage-task-contract-integration.md](references/stage-task-contract-integration.md) | Stage 与 Task Contract 的归属、单向索引、状态同步和封版门禁 |
 
 ---
 
@@ -262,9 +265,9 @@ Codex 通过 `.codex-plugin/plugin.json` 直接读取根目录下的 `skills/` �
 
 ```
 zflow/
-├── skills/                            # 12 个按需加载的专业技能
+├── skills/                            # 13 个按需加载的专业技能
 ├── agents/                            # 2 个专业审查角色
-├── references/                        # 5 个补充检查清单
+├── references/                        # 6 个共享参考资料
 ├── commands/                          # 3 个 Antigravity CLI 命令
 ├── evals/                             # 每个技能的触发和行为评估
 └── docs/                              # 安装、采纳与贡献指南
