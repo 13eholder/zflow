@@ -102,5 +102,5 @@ TestSSTable_ReadDetectsTornPage
 ## 组合
 
 - **何时直接调用：** 用户要求测试设计、覆盖率分析或对特定缺陷的 Prove-It 测试时。
-- **通过什么调用：** `/test`（TDD 工作流）或 `/ship`（与 `code-reviewer` 并行的覆盖率缺口分析）。
+- **通过什么调用：** 直接选择此角色，或通过 `/ship` 与 `code-reviewer` 并行分析覆盖率缺口。
 - **不要从另一个角色中调用。** 添加测试的建议属于你的报告；用户或斜杠命令决定何时执行它们。参见 [docs/agents.md](../docs/agents.md)。

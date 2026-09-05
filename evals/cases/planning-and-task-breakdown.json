@@ -17,8 +17,7 @@
     ],
     "negative": [
       {
-        "prompt": "排查启动时的崩溃",
-        "owner": "debugging-and-error-recovery"
+        "prompt": "排查启动时的崩溃"
       },
       {
         "prompt": "调 fio 队列深度把这块 NVMe 盘跑满",

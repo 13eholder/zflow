@@ -21,12 +21,12 @@
     ],
     "negative": [
       {
-        "prompt": "生产环境 RPC 间歇性报错，帮我找根因",
-        "owner": "debugging-and-error-recovery"
+        "prompt": "为副本同步链路设计结构化日志、指标和告警",
+        "owner": "observability-and-instrumentation"
       },
       {
-        "prompt": "修复前先为这个 bug 写一个失败测试",
-        "owner": "test-driven-development"
+        "prompt": "设计对象存储 PutObject 的公共 RPC 契约",
+        "owner": "api-and-interface-design"
       }
     ]
   },

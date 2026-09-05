@@ -8,7 +8,7 @@
 
 ### 在提出新技能之前
 
-此技能包已经覆盖了开发生命周期的大部分内容，许多提案与现有技能或其他开放 PR 重叠。在开启新 PR 之前，请完成以下检查，以免审查者花费时间处理重复内容：
+此技能包有意只保留模型原生能力难以替代的专业领域与文档工作流。许多提案会重复模型已有能力，或与现有技能和开放 PR 重叠。在开启新 PR 之前，请完成以下检查，以免审查者花费时间处理重复内容：
 
 1. **搜索目录。** 浏览 [README 中的技能列表](README.md) 并浏览 `skills/`，寻找覆盖你的想法的现有技能（全部或部分）。
 2. **检查开放 PR。** 运行 `gh pr list --state open`（或浏览 PR 标签页），寻找相同主题的提案。近似重复技能的集群已经存在；不要增加它们。
@@ -73,35 +73,6 @@
 ## 翻译
 
 我们不接受文档（README、`docs/`）或技能及其内容的翻译。翻译后的副本会随着技能和文档的演进而过时，而我们没有办法长期维护它们，即使依靠智能体翻译加社区校正，也增加了维护成本而价值有限。请将所有技能、文档和贡献保持为英文。
-
-## 测试钩子
-
-会话启动钩子（`hooks/session-start.sh`）将 `using-agent-skills` 元技能注入每个新的 Claude Code 会话中。位于 `hooks/session-start-test.sh` 的回归测试验证钩子的 JSON 负载——无论是在 `jq` 可用还是不可用时。
-
-在开启涉及以下内容的任何 PR 之前运行它：
-
-- `hooks/session-start.sh`
-- `skills/using-agent-skills/SKILL.md`（钩子嵌入的元技能内容）
-
-```bash
-bash hooks/session-start-test.sh
-```
-
-期望输出：`session-start JSON payload OK`。脚本在任何断言失败时以非零退出码退出。
-
-### 复现无 jq 的回退
-
-当 `jq` 不在 `PATH` 上时，钩子会优雅降级为 `INFO` 优先级的负载。要在本地测试该分支，从 `PATH` 中移除 `jq` 的目录以进行测试调用：
-
-```bash
-JQ_DIR=$(dirname "$(command -v jq)")
-PATH=$(echo "$PATH" | tr ':' '\n' | grep -v "^${JQ_DIR}$" | tr '\n' ':' | sed 's/:$//') \
-  bash hooks/session-start-test.sh
-```
-
-当 `jq` 存在于自己的目录中时（例如来自 Homebrew 的 `/opt/homebrew/bin`，来自手动安装的 `/usr/local/bin`），这种方法能干净地工作。如果你的 `jq` 与测试依赖的其他工具共享系统 bin（例如 `/usr/bin` 中的 `mktemp`），更简单的方法是通过单独的包管理器安装 `jq`，使其拥有自己的 bin 目录，然后重新运行。
-
-钩子的 `command -v jq` 检查在剥离后的 `PATH` 下失败，`INFO` 优先级的回退运行，测试断言 `jq is required` 指导消息而非正常负载。
 
 ## 报告问题
 

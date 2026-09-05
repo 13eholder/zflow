@@ -1,46 +1,36 @@
 # 在 Windsurf 中使用 zflow
 
-## 设置
+Windsurf 的长期规则应保持简短。不要把全部 zflow 技能拼接进 `.windsurfrules`；只在当前任务需要时加载一个专业技能。
 
-### 项目规则
+## 项目规则
 
-Windsurf 使用 `.windsurfrules` 来设置项目特定的智能体指令：
+在 `.windsurfrules` 中保存项目事实和选择边界：
 
-```bash
-# 从最重要的技能创建组合规则文件
-cat /path/to/zflow/skills/test-driven-development/SKILL.md > .windsurfrules
-echo "\n---\n" >> .windsurfrules
-cat /path/to/zflow/skills/incremental-implementation/SKILL.md >> .windsurfrules
-echo "\n---\n" >> .windsurfrules
-cat /path/to/zflow/skills/code-review-and-quality/SKILL.md >> .windsurfrules
+```markdown
+# 项目约定
+
+- 构建、测试与 lint 命令：按本仓库文档执行。
+- 修改前检查相邻实现和测试；修改后运行验证并检查 diff。
+- 普通实现、测试、调试、重构和审查使用模型原生工作流。
+- 只有任务明确匹配 zflow 的专业领域或文档产物时才加载对应技能。
+- 同一请求默认只使用一个主技能。
 ```
 
-### 全局规则
+## 按需加载
 
-对于需要在所有项目中使用的技能，将其添加到 Windsurf 的全局规则中：
+平台无法自动发现技能时，把当前任务所需的单个 `SKILL.md` 放入会话。例如：
 
-1. 打开 Windsurf → 设置 → AI → 全局规则
-2. 粘贴你最常用技能的内容
-
-## 推荐配置
-
-保持 `.windsurfrules` 聚焦于 2-3 个核心技能，以保持在上下文限制之内：
-
+```text
+公共 API 或 RPC 契约 → skills/api-and-interface-design/SKILL.md
+尾延迟或吞吐问题   → skills/performance-optimization/SKILL.md
+ADR 或工程文档      → skills/documentation-and-adrs/SKILL.md
+生产发布            → skills/shipping-and-launch/SKILL.md
 ```
-# .windsurfrules
-# 本项目的核心技能
 
-[粘贴 test-driven-development SKILL.md]
-
----
-
-[粘贴 incremental-implementation SKILL.md]
-
----
-
-[粘贴 code-review-and-quality SKILL.md]
-```
+不要把这些文件永久合并到一个全局规则中。任务结束后移除临时上下文。
 
 ## 使用技巧
 
-1. **有选择性**——Windsurf 的上下文有限。选择能解决你最大质量缺口的技能。
+1. 优先让 Windsurf 使用原生代码探索与验证能力。
+2. 技能只补充领域约束，不替代仓库中的真实命令和证据。
+3. 如果多个技能看似适用，先选择决定主要交付物的那个；只有明确独立缺口时再添加第二个。

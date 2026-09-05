@@ -17,8 +17,7 @@
     ],
     "negative": [
       {
-        "prompt": "单元测试空指针异常，帮我定位",
-        "owner": "debugging-and-error-recovery"
+        "prompt": "单元测试空指针异常，帮我定位"
       },
       {
         "prompt": "副本同步最近越来越慢，帮我 profile 并提速",

@@ -48,7 +48,7 @@
 
 2. 确保 `.claude/sdd-cache/` 在你的 `.gitignore` 中（已包含在本仓库中）。
 
-3. 像往常一样使用 `/source-driven-development`（或该技能）。无需对技能或智能体工作流做任何更改——缓存是透明的。
+3. 像往常一样调用 `source-driven-development` 技能。无需对技能或智能体工作流做任何更改——缓存是透明的。
 
 ## 思维模型
 

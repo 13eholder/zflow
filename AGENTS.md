@@ -10,77 +10,46 @@
 
 ## OpenCode 集成
 
-OpenCode 使用由 `skill` 工具和此仓库的 `/skills` 目录驱动的**技能驱动执行模型**。
+OpenCode 从本仓库的 `skills/` 目录发现技能。技能用于补充模型没有必要重复内化的专业能力，不是每个任务都要经过的路由层。
 
 ### 核心规则
 
-- 如果任务匹配某个技能，你**必须**调用它
+- 普通代码探索、实现、测试、调试、重构、代码审查和 Git 操作直接使用模型原生工作流
+- 仅当请求明确匹配下表中的专业领域或文档产物时加载技能
+- 默认只加载一个主技能；不要自动串联完整生命周期
+- 用户显式点名技能时，严格遵循该技能
 - 技能位于 `skills/<skill-name>/SKILL.md`
-- 如果有技能适用，绝不直接实现
-- 始终严格遵循技能指令（不要部分应用它们）
 
 ### 意图 → 技能映射
 
-智能体应自动将用户意图映射到技能：
+智能体只在意图清晰匹配时映射：
 
-- 功能 / 新能力 → `spec-driven-development`，然后 `incremental-implementation`、`test-driven-development`
-- 规划 / 分解 → `planning-and-task-breakdown`
-- 缺陷 / 失败 / 异常行为 → `debugging-and-error-recovery`
-- 容错验证 / 故障演练 / 混沌工程 → `failure-injection-testing`
-- 一致性 / 持久性承诺验证 → `consistency-and-durability-verification`
-- 代码审查 → `code-review-and-quality`
-- 重构 / 简化 → `code-simplification`
-- 接口 / 协议设计 → `api-and-interface-design`
-- 性能 / 延迟问题 → `performance-optimization`
-- 数据迁移 / 升级 → `shipping-and-launch`
+- 公共 API、RPC、协议或模块契约 → `api-and-interface-design`
+- 容错验证、故障演练或混沌工程 → `failure-injection-testing`
+- 一致性、持久性或崩溃恢复承诺 → `consistency-and-durability-verification`
+- 性能、尾延迟、吞吐或 I/O 放大 → `performance-optimization`
+- 日志、指标、追踪或告警设计 → `observability-and-instrumentation`
+- 废弃、消费者迁移或安全下线 → `deprecation-and-migration`
+- 生产发布、灰度或回滚决策 → `shipping-and-launch`
+- 明确要求规范 → `spec-driven-development`
+- 明确要求持久化实施计划或任务清单 → `planning-and-task-breakdown`
+- 文档或 ADR → `documentation-and-adrs`
+- 需要官方来源验证 → `source-driven-development`
+- 用户显式要求创建或封版 Stage → `stage`
 
-### 生命周期映射（隐式命令）
-
-OpenCode 不支持 `/spec` 或 `/plan` 等斜杠命令。
-
-相反，智能体必须在内部遵循此生命周期：
-
-- 定义 → `spec-driven-development`
-- 规划 → `planning-and-task-breakdown`
-- 构建 → `incremental-implementation` + `test-driven-development`
-- 验证 → `debugging-and-error-recovery`
-- 审查 → `code-review-and-quality`
-- 发布 → `shipping-and-launch`
-
-### 执行模型
-
-对于每个请求：
-
-1. 判断是否有技能适用（即使只有 1% 的可能性）
-2. 使用 `skill` 工具调用相应的技能
-3. 严格遵循技能工作流
-4. 仅在所需步骤（规范、计划等）完成后才进入实现阶段
-
-### 反合理化
-
-以下想法是不正确的，必须忽略：
-
-- "这对于使用技能来说太小了"
-- "我可以直接快速实现这个"
-- "我先收集上下文"
-
-正确的行为：
-
-- 始终首先检查并使用技能
-
-这确保 OpenCode 表现得与具有完整工作流执行的 Claude Code 相似。
+如果只是新增功能、修复缺陷、编写测试、简化代码、检查 diff 或操作 Git，不加载技能。
 
 ## 编排：角色、技能和斜杠命令
 
 此仓库有三个可组合的层次。它们各有不同的职责，不应混淆：
 
-- **技能**（`skills/<name>/SKILL.md`）——带有步骤和退出标准的工作流。属于*如何做*。当意图匹配时必须跳转。
+- **技能**（`skills/<name>/SKILL.md`）——专业领域或明确文档产物的工作流。属于*如何做*。
 - **角色**（`agents/<role>.md`）——具有视角和输出格式的角色。属于*谁来做*。
 - **斜杠命令**（`.claude/commands/*.md`）——面向用户的入口。属于*何时做*。即编排层。
 
-组合规则：**用户（或斜杠命令）是编排者。角色不调用其他角色。** 角色可以调用技能。
+组合规则：**用户（或斜杠命令）是编排者。角色不调用其他角色。**
 
-此仓库认可的唯一多角色编排模式是**并行发散并合并**——由 `/ship` 使用，同时运行 `code-reviewer` 和 `test-engineer` 并综合它们的报告。不要构建一个"路由器"角色来决定调用哪个其他角色；这是斜杠命令和意图映射的职责。
+此仓库认可的唯一多角色编排模式是**并行发散并合并**——由 `/ship` 使用，同时运行 `code-reviewer` 和 `test-engineer` 并综合它们的报告。不要构建一个角色路由器。
 
 参见 [docs/agents.md](docs/agents.md) 了解决策矩阵，参见 [references/orchestration-patterns.md](references/orchestration-patterns.md) 了解完整的模式目录。
 

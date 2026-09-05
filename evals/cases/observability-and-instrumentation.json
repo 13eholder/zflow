@@ -17,8 +17,7 @@
     ],
     "negative": [
       {
-        "prompt": "简化这个过度设计的组件",
-        "owner": "code-simplification"
+        "prompt": "简化这个过度设计的组件"
       },
       {
         "prompt": "为新的分层存储功能起草 PRD",

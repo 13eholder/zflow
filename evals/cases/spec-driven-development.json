@@ -21,8 +21,7 @@
         "owner": "observability-and-instrumentation"
       },
       {
-        "prompt": "把这行炫技代码简化成可读的写法",
-        "owner": "code-simplification"
+        "prompt": "把这行炫技代码简化成可读的写法"
       }
     ]
   },

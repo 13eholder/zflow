@@ -1,151 +1,93 @@
 # zflow 入门指南
 
-zflow 适用于任何接受 Markdown 指令的 AI 编程智能体。本指南涵盖通用方法。如需特定工具的设置说明，请参阅专门的指南。
+zflow 适用于任何能够发现或加载 Markdown 技能的 AI 编程智能体。它只补充专业领域和明确文档产物；代码探索、实现、测试、调试、重构、diff 自审与 Git 操作继续使用智能体的原生能力。
 
-## 技能如何运作
-
-每个技能都是一个 Markdown 文件（`SKILL.md`），描述一个特定的工程工作流。当加载到智能体的上下文中时，智能体会遵循该工作流——包括验证步骤、需要避免的反模式和退出标准。
-
-**技能不是参考文档。** 它们是智能体遵循的逐步流程。
-
-## 快速入门（任何智能体）
-
-### 1. 克隆仓库
+## 最快开始
 
 ```bash
 git clone https://github.com/13eholder/zflow.git
+npx skills add 13eholder/zflow
 ```
 
-### 2. 选择一个技能
+也可以只安装一个技能：
 
-浏览 `skills/` 目录。每个子目录包含一个 `SKILL.md`，其中包含：
-- **何时使用**——表明此技能适用的触发条件
-- **流程**——逐步工作流
-- **验证**——如何确认工作已完成
-- **常见合理化借口**——智能体可能用来跳过步骤的借口
-- **危险信号**——技能被违反的迹象
-
-### 3. 将技能加载到你的智能体中
-
-将相关的 `SKILL.md` 内容复制到你的智能体的系统提示词、规则文件或对话中。最常见的方法：
-
-**系统提示词：** 在会话开始时粘贴技能内容。
-
-**规则文件：** 将技能内容添加到项目的规则文件中（CLAUDE.md、.cursorrules 等）。
-
-**对话：** 在给出指令时引用技能："请对此变更遵循 test-driven-development 流程。"
-
-### 4. 使用元技能进行发现
-
-首先加载 `using-agent-skills` 技能。它包含一个将任务类型映射到合适技能的流程图。
-
-## 推荐设置
-
-正在将技能推广到真实项目中？**[采纳指南](adoption-guide.md)** 涵盖了两条端到端路径：为全新项目从第一天开始的完整生命周期，以及为已有代码库的渐进式、验证优先的滚动发布。以下设置是快速版本。
-
-### 最小化设置（从这里开始）
-
-将三个基本技能加载到你的规则文件中：
-
-1. **spec-driven-development**——用于定义要构建什么
-2. **test-driven-development**——用于证明它能用
-3. **code-review-and-quality**——用于在合并前验证质量
-
-这三个技能覆盖了 AI 辅助开发中最关键的质量缺口。
-
-### 完整生命周期
-
-要获得全面的覆盖，按阶段加载技能：
-
-```
-开始项目时：    spec-driven-development → planning-and-task-breakdown
-开发过程中：    incremental-implementation + test-driven-development
-合并之前：      code-review-and-quality
-部署之前：      shipping-and-launch
+```bash
+npx skills add 13eholder/zflow --skill api-and-interface-design
 ```
 
-### 上下文感知加载
+各平台的原生安装方式见本目录中的对应设置指南。
 
-不要一次加载所有技能——这会浪费上下文。加载与当前任务相关的技能：
+## 什么时候加载技能
 
-- 在调试？加载 `debugging-and-error-recovery`
-- 在设置 CI？加载 `ci-cd-and-automation`
+默认不加载技能。仅当请求清晰匹配以下领域或产物时，加载一个主技能：
 
-## 技能结构
+| 任务 | 技能 |
+|------|------|
+| 公共 API、RPC、协议或模块契约 | `api-and-interface-design` |
+| 一致性、持久性或崩溃恢复承诺 | `consistency-and-durability-verification` |
+| 故障注入、故障演练或混沌工程 | `failure-injection-testing` |
+| 延迟、吞吐、IOPS 或放大问题 | `performance-optimization` |
+| 日志、指标、追踪或告警设计 | `observability-and-instrumentation` |
+| 废弃、迁移或安全下线 | `deprecation-and-migration` |
+| 生产发布、灰度与回滚决策 | `shipping-and-launch` |
+| 工程文档或 ADR | `documentation-and-adrs` |
+| 需要官方来源验证 | `source-driven-development` |
+| 明确要求结构化规范 | `spec-driven-development` |
+| 明确要求持久化计划或任务清单 | `planning-and-task-breakdown` |
+| 显式创建或封版一轮工作的 Stage | `stage` |
 
-每个技能遵循相同的结构：
+如果请求只是“实现这个功能”“修复这个错误”“写测试”“简化代码”或“审查 diff”，不需要额外技能。
 
+## 如何加载
+
+优先使用平台原生的技能目录和自动发现机制。平台没有技能机制时，可把当前任务所需的单个 `SKILL.md` 放入会话上下文；不要把全部技能永久拼接进规则文件。
+
+显式调用示例：
+
+```text
+请使用 api-and-interface-design 设计这个公共 RPC 契约。
+请使用 documentation-and-adrs 把这项架构决策记录为 ADR。
 ```
-YAML 前置元数据（name、description）
-├── 概述 —— 该技能做什么
-├── 何时使用 —— 触发条件和情境
-├── 核心流程 —— 逐步工作流
-├── 示例 —— 代码示例和模式
-├── 常见合理化借口 —— 借口与反驳
-├── 危险信号 —— 技能被违反的迹象
-└── 验证 —— 退出标准检查清单
-```
 
-参见 [skill-anatomy.md](skill-anatomy.md) 了解完整规范。
+每个技能都包含触发条件、流程、危险信号和验证标准。技能引用补充清单时，再按需读取 `references/` 中的对应文件。
 
-## 使用智能体
+## 斜杠命令
 
-`agents/` 目录包含预配置的智能体角色：
+Claude Code 与 Antigravity 集成只保留三个明确入口：
 
-| 智能体 | 用途 |
-|-------|---------|
-| `code-reviewer.md` | 五轴代码审查 |
-| `test-engineer.md` | 测试策略和编写 |
+| 命令 | 产物或关卡 |
+|------|------------|
+| `/spec` | 生成并确认 `SPEC.md` |
+| `/plan` 或 Antigravity 的 `/planning` | 生成 `tasks/plan.md` 与 `tasks/todo.md` |
+| `/ship` | 并行审查并形成 go/no-go 与回滚方案 |
 
-在你需要专业审查时加载智能体定义。例如，让你的编程智能体"使用 code-reviewer 智能体角色审查此变更"，并提供智能体定义。
+规范和计划是可选的持久化产物，不是所有编码请求的前置条件。日常实现直接由智能体完成，并使用仓库已有命令验证。
 
-## 使用斜杠命令
+## 专业角色
 
-`.claude/commands/` 目录包含 Claude Code 的斜杠命令：
+`agents/` 提供两个可直接选择的角色：
 
-| 命令 | 调用的技能 |
-|---------|---------------|
-| `/spec` | spec-driven-development |
-| `/plan` | planning-and-task-breakdown |
-| `/build` | incremental-implementation + test-driven-development |
-| `/build auto` | planning-and-task-breakdown → incremental-implementation + test-driven-development（整个计划，一次批准） |
-| `/test` | test-driven-development |
-| `/review` | code-review-and-quality |
-| `/code-simplify` | code-simplification |
-| `/ship` | shipping-and-launch |
+| 角色 | 用途 |
+|------|------|
+| `code-reviewer` | 对具体变更做独立代码审查 |
+| `test-engineer` | 分析测试策略与覆盖缺口 |
 
-> **注意：** 作为 Claude Code 插件安装时，你可能会看到类似
-> _"Default commands/ folder is ignored because the manifest sets 'commands'"_ 的警告。
-> 这是预期行为。根目录下的 `commands/` 目录属于 Antigravity CLI，
-> 有意与 `.claude/commands/` 分开。所有 Claude Code 斜杠
-> 命令都能从 `.claude/commands/` 正常加载；该警告只是表面性的。
+`/ship` 会在发布前并行调用两个角色并由主智能体合并结果。其他情况下直接选择需要的角色即可。
 
-## 使用参考资料
+## 参考资料
 
-`references/` 目录包含补充性检查清单：
+| 文件 | 用途 |
+|------|------|
+| `definition-of-done.md` | 通用完成标准 |
+| `testing-patterns.md` | 基础设施与分布式系统测试模式 |
+| `performance-checklist.md` | 性能测量与诊断清单 |
+| `observability-checklist.md` | 可观测性设计与发布检查 |
+| `orchestration-patterns.md` | 多角色编排边界 |
 
-| 参考资料 | 配合使用 |
-|-----------|----------|
-| `testing-patterns.md` | test-driven-development |
-| `performance-checklist.md` | performance-optimization |
-| `definition-of-done.md` | 所有技能 / 每个变更 |
-| `observability-checklist.md` | observability-and-instrumentation |
-| `orchestration-patterns.md` | doubt-driven-development |
+## 使用原则
 
-当你需要超出技能范围的详细模式时加载参考资料。
-
-## 规范和任务产物
-
-`/spec` 和 `/plan` 命令创建工作产物（`SPEC.md`、`tasks/plan.md`、`tasks/todo.md`）。在开发进行中将它们视为**活动文档**：
-
-- 在开发期间将它们纳入版本控制，使开发者和智能体拥有共享的事实来源。
-- 当范围或决策发生变化时更新它们。
-- 如果你的仓库不想要长期保留这些文件，在合并前删除它们或将文件夹添加到 `.gitignore`——工作流不要求它们是永久性的。
-
-## 技巧
-
-1. **从 spec-driven-development 开始**任何非平凡的工作
-2. **在编写代码时始终加载 test-driven-development**
-3. **不要跳过验证步骤**——它们是核心所在
-4. **有选择地加载技能**——更多上下文并不总是更好
-5. **使用智能体进行审查**——不同的视角捕捉不同的问题
+1. 先判断任务是否真的需要专业技能。
+2. 默认只加载一个主技能，避免技能链和重复流程。
+3. 文档类技能只在用户需要相应产物时触发。
+4. 修改代码后仍应运行相关测试、检查 diff 并报告证据；这些属于智能体原生工作流。
+5. 高风险迁移和生产发布必须保留显式确认与回滚边界。

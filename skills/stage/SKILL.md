@@ -61,7 +61,7 @@ Stage 回答三个问题：
 ## Stage 生命周期
 
 ```
-/plan 输出后               /build 过程中              /build 全部完成后          /ship 执行时
+/plan 输出后               实现过程中                  全部实现完成后              /ship 执行时
      │                          │                          │                      │
      ▼                          ▼                          ▼                      ▼
   创建骨架                  逐任务追加文档               封版 STAGE.md            检查 Stage 存在
@@ -89,7 +89,7 @@ Stage 回答三个问题：
 
 ### 填充（构建阶段）
 
-在 `/build` 执行过程中：
+在实现过程中：
 - 每完成一个任务，无需修改 STAGE.md
 - 当应然文档（spec、api-contract）产出时，更新对应链接，去掉 TODO 标记
 
@@ -295,7 +295,7 @@ Stage 封版（状态变为 `done`）后，如果发现小问题需要修补，�
 | 状态 | 含义 | 何时使用 |
 |------|------|---------|
 | `draft` | 骨架已创建，实现尚未开始 | Stage 创建后 |
-| `in-progress` | 正在实现中 | `/build` 执行期间（可选使用） |
+| `in-progress` | 正在实现中 | 实现期间（可选使用） |
 | `done` | 按计划完成，已封版 | 所有任务完成、验证通过、学习摘要已写 |
 | `abandoned` | 中途放弃 | 方向错了、需求取消、被更高优先级打断 |
 | `superseded` | 被另一个 Stage 覆盖 | Stage-B 的范围吞掉了 Stage-A |
@@ -356,7 +356,7 @@ stages/
 | **api-and-interface-design** | 应然文档中的协议契约（gRPC/protobuf）和实然文档中的接口文档都链接到 Stage |
 | **failure-injection-testing** | 涉及容错与故障恢复时，故障注入方案和混沌实验报告链接到 Stage 实然文档 |
 | **consistency-and-durability-verification** | 涉及存储或状态复制时，一致性/持久性校验报告链接到 Stage 验证结果 |
-| **incremental-implementation** | `/build` 全部完成后，Agent 提醒封版 Stage |
+| **智能体原生实现流程** | 全部任务完成并验证后，Agent 提醒封版 Stage |
 | **documentation-and-adrs** | ADR 是 Stage 的必填产出；每个 Stage 至少一篇 |
 | **shipping-and-launch** | `/ship` 检查 Stage 是否存在（本轮曾创建则阻断） |
 

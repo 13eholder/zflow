@@ -16,28 +16,17 @@ body:
       description: Which skill did not work as expected?
       options:
         - api-and-interface-design
-        - ci-cd-and-automation
-        - code-review-and-quality
-        - code-simplification
         - consistency-and-durability-verification
-        - context-engineering
-        - debugging-and-error-recovery
         - deprecation-and-migration
         - documentation-and-adrs
-        - doubt-driven-development
         - failure-injection-testing
-        - git-workflow-and-versioning
-        - idea-refine
-        - incremental-implementation
-        - interview-me
         - observability-and-instrumentation
         - performance-optimization
         - planning-and-task-breakdown
         - shipping-and-launch
         - source-driven-development
         - spec-driven-development
-        - test-driven-development
-        - using-agent-skills
+        - stage
         - other / not sure
     validations:
       required: true

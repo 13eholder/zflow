@@ -17,8 +17,7 @@
     ],
     "negative": [
       {
-        "prompt": "找一下 worker 内存泄漏的根因",
-        "owner": "debugging-and-error-recovery"
+        "prompt": "找一下 worker 内存泄漏的根因"
       },
       {
         "prompt": "设计管理面 API 的请求限流策略",

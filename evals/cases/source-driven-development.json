@@ -17,8 +17,7 @@
     ],
     "negative": [
       {
-        "prompt": "修一下 CI 上不稳定的测试",
-        "owner": "ci-cd-and-automation"
+        "prompt": "修一下 CI 上不稳定的测试"
       },
       {
         "prompt": "把规格拆成有序任务",

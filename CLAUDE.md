@@ -9,22 +9,20 @@
 ```
 skills/       → 核心技能（每个目录一个 SKILL.md）
 agents/       → 可复用的智能体角色（code-reviewer、test-engineer）
-hooks/        → 会话生命周期钩子
-.claude/commands/ → 斜杠命令（/spec、/plan、/build、/test、/review、/code-simplify、/ship）
+hooks/        → 可选的来源缓存钩子
+.claude/commands/ → 斜杠命令（/spec、/plan、/ship）
 references/   → 补充性检查清单（测试、性能、可观测性）
 evals/        → 技能评估用例 + 框架（参见 evals/README.md）
 docs/         → 不同工具的设置指南
 ```
 
-## 按阶段分类的技能
+## 技能分类
 
-**定义：** interview-me、idea-refine、spec-driven-development
-**规划：** planning-and-task-breakdown
-**构建：** incremental-implementation、test-driven-development、context-engineering、source-driven-development、doubt-driven-development、api-and-interface-design
-**验证：** debugging-and-error-recovery, failure-injection-testing, consistency-and-durability-verification
-**审查：** code-review-and-quality、code-simplification、performance-optimization
-**串联：** stage（跨阶段文档串联，用户显式调用）
-**发布：** git-workflow-and-versioning、ci-cd-and-automation、deprecation-and-migration、documentation-and-adrs、observability-and-instrumentation、shipping-and-launch
+**专业基础设施能力：** api-and-interface-design、consistency-and-durability-verification、failure-injection-testing、performance-optimization、observability-and-instrumentation、deprecation-and-migration、shipping-and-launch
+
+**文档与明确产物：** documentation-and-adrs、source-driven-development、spec-driven-development、planning-and-task-breakdown、stage
+
+普通代码探索、实现、测试、调试、重构、审查和 Git 操作由智能体原生工作流处理。默认只加载一个明确匹配的主技能，不自动串联生命周期。
 
 ## 约定
 

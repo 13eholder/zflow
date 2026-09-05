@@ -21,8 +21,7 @@
         "owner": "planning-and-task-breakdown"
       },
       {
-        "prompt": "为这个 RPC 端点写单元测试",
-        "owner": "test-driven-development"
+        "prompt": "为这个 RPC 端点写单元测试"
       }
     ]
   },

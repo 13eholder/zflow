@@ -3,15 +3,15 @@ description = "通过并行发散到专业角色运行发布前检查清单，�
 prompt = """
 Invoke the shipping-and-launch skill.
 
-`/ship` is a **fan-out orchestrator**. It runs three specialist personas in parallel against the current change, then merges their reports into a single go/no-go decision with a rollback plan. The personas operate independently — no shared state, no ordering — which is what makes parallel execution safe and useful here.
+`/ship` is a **fan-out orchestrator**. It runs two specialist personas in parallel against the current change, then merges their reports into a single go/no-go decision with a rollback plan. The personas operate independently — no shared state, no ordering — which is what makes parallel execution safe and useful here.
 
 ## Phase A — Parallel fan-out
 
-Spawn three subagents concurrently. The CLI exposes each custom subagent in `agents/` as a tool with the same name — so `code-reviewer.md` becomes a `code-reviewer` tool the main agent can call, and `@code-reviewer` works as an explicit invocation in the prompt. **Issue all three subagent tool calls in a single assistant turn so they execute in parallel** — sequential calls defeat the purpose of this command.
+Spawn two subagents concurrently. The CLI exposes each custom subagent in `agents/` as a tool with the same name — so `code-reviewer.md` becomes a `code-reviewer` tool the main agent can call, and `@code-reviewer` works as an explicit invocation in the prompt. **Issue both subagent tool calls in a single assistant turn so they execute in parallel** — sequential calls defeat the purpose of this command.
 
 Dispatch each persona by tool name:
 
-1. **`code-reviewer`** — Run a seven-axis review (correctness, concurrency correctness, error-handling completeness, readability, architecture, performance & resource lifecycle) on the staged changes or recent commits. Output the standard review template.
+1. **`code-reviewer`** — Run a six-axis review (correctness, concurrency correctness, error-handling completeness, readability, architecture, performance & resource lifecycle) on the staged changes or recent commits. Output the standard review template.
 2. **`test-engineer`** — Analyze test coverage for the change. Identify gaps in happy path, edge cases, error paths, and concurrency scenarios. Output the standard coverage analysis.
 
 If subagents are unavailable in the current CLI version, invoke each persona's system prompt sequentially in the main context and treat their outputs as if returned in parallel — the merge phase still works.
@@ -25,7 +25,7 @@ Constraints (from CLI's subagent model):
 
 ## Phase B — Merge in main context
 
-Once all three reports are back, the main agent (not a sub-persona) synthesizes them:
+Once both reports are back, the main agent (not a sub-persona) synthesizes them:
 
 1. **Code Quality** — Aggregate Critical/Important findings from `code-reviewer` and any failing tests, lint, or build output.
 2. **Performance** — Pull from `code-reviewer`'s performance axis; cross-check p99/p999 latency and capacity headroom.

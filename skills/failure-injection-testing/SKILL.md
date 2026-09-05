@@ -18,7 +18,7 @@ description: 通过受控故障注入验证系统的容错能力。在验证节�
 - 复盘后需要把事故场景固化为回归测试
 - 建立常态化的混沌工程/故障演练机制
 
-不适用于：单元级逻辑验证（用 `test-driven-development`）、性能瓶颈定位（用 `performance-optimization`）、已知故障的根因排查（用 `debugging-and-error-recovery`）。
+不适用于：单元级逻辑验证、已知故障的常规根因排查，以及性能瓶颈定位（后者用 `performance-optimization`）。
 
 ## 流程
 

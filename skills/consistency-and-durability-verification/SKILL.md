@@ -19,7 +19,7 @@ description: 验证系统的一致性与持久性承诺。在设计或修改复�
 - 评审副本一致性、校验和、端到端数据完整性设计
 - 响应"数据对不上"类事故，需要验证修复是否真正守住承诺
 
-不适用于：一般功能测试（用 `test-driven-development`）、性能验证（用 `performance-optimization`）。
+不适用于：一般功能测试（使用仓库原生测试流程）、性能验证（用 `performance-optimization`）。
 
 ## 流程
 

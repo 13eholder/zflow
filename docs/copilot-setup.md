@@ -7,11 +7,11 @@
 Copilot 支持在仓库中使用 `.github/skills`、`.claude/skills` 或 `.agents/skills` 目录创建智能体技能。
 
 ```bash
-mkdir -p .github/skills/test-driven-development .github/skills/code-review-and-quality
+mkdir -p .github/skills/api-and-interface-design .github/skills/observability-and-instrumentation
 
-# 为核心技能创建文件
-cat /path/to/zflow/skills/test-driven-development/SKILL.md > .github/skills/test-driven-development/SKILL.md
-cat /path/to/zflow/skills/code-review-and-quality/SKILL.md > .github/skills/code-review-and-quality/SKILL.md
+# 只复制项目实际需要的专业技能
+cp /path/to/zflow/skills/api-and-interface-design/SKILL.md .github/skills/api-and-interface-design/SKILL.md
+cp /path/to/zflow/skills/observability-and-instrumentation/SKILL.md .github/skills/observability-and-instrumentation/SKILL.md
 ```
 
 更多详细信息，参见[为 GitHub Copilot 创建智能体技能](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-skills)。
@@ -53,8 +53,8 @@ GitHub Copilot 通过 `.github/copilot-instructions.md` 支持项目级别的指
 # 项目编码标准
 
 ## 测试
-- 在代码之前编写测试（TDD）
-- 对于缺陷：首先编写一个失败测试，然后修复（Prove-It 模式）
+- 对行为变更添加能证明新旧差异的测试
+- 对于缺陷：先稳定复现，再修复并加入回归测试
 - 测试层次：单元 > 集成 > e2e（使用能捕捉行为的最低层级）
 - 每次变更后运行 `go test ./... -race` 或 `cargo test`
 

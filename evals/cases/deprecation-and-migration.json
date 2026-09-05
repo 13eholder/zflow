@@ -20,8 +20,7 @@
         "prompt": "给网关加一个健康检查端点"
       },
       {
-        "prompt": "为什么这个测试在 CI 上不稳定？",
-        "owner": "ci-cd-and-automation"
+        "prompt": "为什么这个测试在 CI 上不稳定？"
       }
     ]
   },

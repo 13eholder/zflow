@@ -140,7 +140,7 @@ description: 在编码之前创建规格。当开始一个新项目、功能或�
 
 > 遵循 `planning-and-task-breakdown` 了解这些步骤背后的依赖图映射和垂直切片机制；它是规范的来源。上面的要点是轻量摘要；如果它们有分歧，以 `planning-and-task-breakdown` 为准。
 >
-> **输出约定：** 将计划保存到 `tasks/plan.md`，将任务列表保存到 `tasks/todo.md`，按照 `/plan` 命令约定。如果 `tasks/` 不存在则创建它。下游命令（`/build` 等）期望这些路径。
+> **输出约定：** 将计划保存到 `tasks/plan.md`，将任务列表保存到 `tasks/todo.md`，按照 `/plan` 命令约定。如果 `tasks/` 不存在则创建它。后续实现可以直接以这些文件作为任务来源。
 
 计划应该是可审查的：人类应该能够阅读它然后说"是的，这是正确的方法"或"不，改 X。"
 
@@ -166,7 +166,7 @@ description: 在编码之前创建规格。当开始一个新项目、功能或�
 
 ### 阶段 4：实现
 
-一次执行一个任务，遵循 `skills/incremental-implementation/SKILL.md`（`incremental-implementation`）和 `skills/test-driven-development/SKILL.md`（`test-driven-development`）。使用 `skills/context-engineering/SKILL.md`（`context-engineering`）在每个步骤加载正确的规格部分和源文件，而非用整个规格淹没智能体。
+一次执行一个任务。每次只加载当前任务需要的规格片段和源文件，先确认现有实现与测试模式，再修改、验证并检查 diff。普通实现、测试、调试和代码审查由智能体的原生工作流负责，不需要额外技能串联。
 
 ## 保持规格持续更新
 

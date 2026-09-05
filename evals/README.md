@@ -29,8 +29,8 @@ node scripts/run-evals.js
 node scripts/run-evals.js --min-rank1 80  # 强制执行当前路由下限
 
 # 第三层级——行为评估，通过无界面 claude 运行每个评估，然后评分
-node scripts/run-evals.js --behavioral test-driven-development            # 消耗 Token
-node scripts/run-evals.js --behavioral test-driven-development --dry-run  # 仅打印计划
+node scripts/run-evals.js --behavioral api-and-interface-design            # 消耗 Token
+node scripts/run-evals.js --behavioral api-and-interface-design --dry-run  # 仅打印计划
 ```
 
 第三层级支持两种行为工作产物类型。`execution` 是默认类型：每个评估在一次性 git 仓库中运行，来自 `files[]` 的真实项目输入从 `evals/fixtures/` 中被物化并作为基线提交，评分器根据完整的 `--output-format stream-json --verbose` 执行轨迹进行评判，包括工具调用。`dialogue` 保留给那些交付物本身就是对话本身的技能；它不需要测试夹具，评分器评判助手的对话回合，而不要求文件编辑或命令执行。声明 `dialogue` 需要人工审核豁免，不是执行技能逃避评分的通用后门。
@@ -43,28 +43,28 @@ node scripts/run-evals.js --behavioral test-driven-development --dry-run  # 仅�
 
 ```json
 {
-  "skill_name": "test-driven-development",
+  "skill_name": "api-and-interface-design",
   "trigger": {
     "positive": [
-      { "prompt": "Write a failing test for this bug before fixing it", "top_k": 3 }
+      { "prompt": "Design a stable public RPC contract for object storage", "top_k": 3 }
     ],
     "negative": [
-      { "prompt": "Update the architecture diagram in the docs", "owner": "documentation-and-adrs" }
+      { "prompt": "Record this architecture decision as an ADR", "owner": "documentation-and-adrs" }
     ]
   },
   "evals": [
     {
       "id": 1,
       "kind": "execution",
-      "prompt": "Fix the reported rounding bug in the invoice totals, test-first.",
-      "expected_output": "A failing test demonstrating the bug, a minimal fix turning it green, full suite passing",
+      "prompt": "Design the public RPC contract for an object-storage service.",
+      "expected_output": "A versioned contract with request/response shapes, error semantics, idempotency, and compatibility rules",
       "files": [
-        "test-driven-development"
+        "api-and-interface-design"
       ],
       "expectations": [
-        "A failing test is written and shown failing before the fix",
-        "The implementation is the minimum needed to pass",
-        "The full suite is run after the fix to catch regressions"
+        "Retryable and non-retryable errors are distinguishable",
+        "Write operations define idempotency behavior",
+        "Rolling-upgrade compatibility is explicit"
       ]
     }
   ]
@@ -82,4 +82,4 @@ node scripts/run-evals.js --behavioral test-driven-development --dry-run  # 仅�
 
 ## 需要关注的指标
 
-第二层级的运行会打印**触发首位排名率**（正面提示词中将其技能排在第一名的比例，而不仅仅是前 k 名）。CI 使用 `--min-rank1 80` 运行，在已登记的 86% 基线之下留出有用的缓冲空间，这样不相关的描述编辑不会立即导致 CI 变红。随着路由的改善提高下限；永远不要为了通过回归而降低它。下降的数字意味着描述正在趋同。冲突检查会在成对描述相似度 ≥75% 时报错，在 ≥50% 时发出警告。这些评估所揭示的已知描述词汇缺口记录在 [#351](https://github.com/13eholder/zflow/issues/351) 中。
+第二层级的运行会打印**触发首位排名率**（正面提示词中将其技能排在第一名的比例，而不仅仅是前 k 名）。CI 使用 `--min-rank1 80` 运行，在已登记的 83% 基线之下留出少量缓冲空间。随着路由改善应提高下限；永远不要为了通过回归而降低它。下降的数字意味着描述正在趋同。冲突检查会在成对描述相似度 ≥75% 时报错，在 ≥50% 时发出警告。这些评估所揭示的已知描述词汇缺口记录在 [#351](https://github.com/13eholder/zflow/issues/351) 中。

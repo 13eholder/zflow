@@ -159,8 +159,8 @@ description: 引导智能体完成[任务/工作流]。在[特定触发条件]�
 通过名称引用其他技能：
 
 ```markdown
-编写测试时遵循 `test-driven-development` 技能。
-如果构建失败，使用 `debugging-and-error-recovery` 技能。
+设计公共协议时遵循 `api-and-interface-design` 技能。
+需要核对当前框架行为时，使用 `source-driven-development` 技能。
 ```
 
 不要在技能间重复内容——应引用和链接。

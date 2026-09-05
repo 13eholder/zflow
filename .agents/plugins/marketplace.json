@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "zflow",
-      "description": "Production-grade engineering skills covering every phase of software development: spec, plan, build, verify, review, and ship.",
+      "description": "Focused workflows for interfaces, reliability, performance, observability, migrations, shipping, and engineering documents.",
       "source": {
         "source": "local",
         "path": "./"

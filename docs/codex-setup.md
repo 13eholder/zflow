@@ -20,11 +20,11 @@ codex plugin marketplace add /path/to/your/clone
 
 ## 使用
 
-安装后，在 Codex 聊天中使用 `@` 调用技能（例如 `@spec-driven-development`），或直接描述任务让 Codex 选择合适的技能。`skills/` 下的全部 24 个技能均可用。
+安装后，在 Codex 聊天中使用 `@` 调用技能（例如 `@spec-driven-development`），或直接描述专业任务让 Codex 选择合适的技能。`skills/` 下的 12 个技能均可用；普通实现、测试、调试和审查继续使用 Codex 原生工作流。
 
 ## 工作原理
 
-- `.codex-plugin/plugin.json`——仓库根目录下的 Codex 插件清单。将 `skills` 指向 `./skills/` 并声明空的 Codex 钩子配置，以便 Codex 不会从 `hooks/hooks.json` 自动加载面向 Claude 的钩子。
+- `.codex-plugin/plugin.json`——仓库根目录下的 Codex 插件清单。将 `skills` 指向 `./skills/` 并声明空的 Codex 钩子配置；zflow 不安装自动会话注入钩子。
 - `.agents/plugins/marketplace.json`——声明仓库根目录（`./`）为插件源的 marketplace 条目。
 - `skills/<name>/SKILL.md`——保持不变。Codex 和 Claude Code 共享相同的 `name` + `description` 前置元数据格式，因此一个文件同时服务于两个平台。
 
