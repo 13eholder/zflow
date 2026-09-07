@@ -6,13 +6,13 @@
   },
   "metadata": {
     "description": "面向基础架构工程的生产级 AI 编程技能与 Oh My Pi 工作流。",
-    "version": "2.1.0"
+    "version": "2.2.0"
   },
   "plugins": [
     {
       "name": "zflow",
       "description": "覆盖接口、一致性、性能、可观测性、迁移、发布、Stage 与工程文档的技能集合。",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "source": "./",
       "author": {
         "name": "13eholder"
