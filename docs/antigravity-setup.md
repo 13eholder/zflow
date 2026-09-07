@@ -1,6 +1,6 @@
 # 在 Antigravity CLI (agy) 中使用 zflow
 
-zflow 可作为原生插件安装，提供 13 个按需技能、两个专业角色和三个自定义命令。
+zflow 可作为原生插件安装，提供 14 个按需技能、两个专业角色和三个自定义命令。
 
 ## 安装
 
@@ -32,13 +32,13 @@ agy plugin validate /path/to/zflow
 | `/planning` | 创建依赖排序的计划与任务清单 | `planning-and-task-breakdown` |
 | `/ship` | 并行发布前审查并形成 go/no-go | `shipping-and-launch` |
 
-Antigravity 使用 `/planning`，避免与内置计划命令冲突。普通实现、测试、调试、重构和 Git 操作由智能体原生工作流处理，不提供额外命令包装。
+Antigravity 使用 `/planning`，避免与内置计划命令冲突。普通实现、测试、调试、普通重构和 Git 操作由智能体原生工作流处理；明确要求保持行为不变地简化复杂代码时，加载 `code-simplification`。
 
 ## 技能发现
 
 Antigravity 从插件的 `skills/` 目录发现技能，并根据前置元数据中的 `description` 按需加载。推荐边界：
 
-- 公共接口、数据承诺、故障注入、性能、可观测性、迁移和生产发布使用对应专业技能。
+- 公共接口、数据承诺、故障注入、性能、可观测性、迁移、生产发布和明确的代码简化请求使用对应专业技能。
 - 规范、持久化计划、ADR、官方来源证据和 Stage 只在明确需要这些产物时使用。
 - 同一请求默认只加载一个主技能，不自动串联。
 - 日常编码请求不加载技能。
@@ -51,6 +51,7 @@ Antigravity 从插件的 `skills/` 目录发现技能，并根据前置元数据
 | “设计跨节点 RPC 的兼容契约” | `api-and-interface-design` |
 | “验证断电恢复后确认写不丢” | `consistency-and-durability-verification` |
 | “准备灰度和回滚方案” | `shipping-and-launch` |
+| “简化这个可运行但过度复杂的函数，保持行为不变” | `code-simplification` |
 
 ## 专业角色
 

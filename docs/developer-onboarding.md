@@ -73,7 +73,7 @@ node scripts/run-evals.js
 
 目录有意只覆盖模型原生能力难以替代的专业领域和文档产物，所以举证责任落在缺口上。在写任何东西之前，运行 [CONTRIBUTING.md](../CONTRIBUTING.md#before-proposing-a-new-skill) 中的预检：搜索目录，检查开放的 PR（`gh pr list --state open`；近似重复的集群已经存在），确认想法符合 [skill-anatomy.md](skill-anatomy.md)，并在 PR 描述中明确说明为什么模型原生流程或现有技能不足。如果它与现有技能重叠，对该技能进行专注的编辑优于新建目录。
 
-一个新技能作为一套完整资产发布，而非单个文件：`skills/<kebab-case-name>/SKILL.md`、匹配的 `evals/cases/<name>.json`，以及一个 `scripts/` 目录——仅当技能包含可运行辅助脚本时（参考资料放在 `references/`，绝不放在技能内部）。确切的前置元数据规则、章节结构和评估用例的最低要求见 [CONTRIBUTING.md](../CONTRIBUTING.md#structure) 和 [skill-anatomy.md](skill-anatomy.md)；从那里获取而非从本导览中获取，以防两者出现偏差。
+一个新技能作为一套完整资产发布，而非单个文件：`skills/<kebab-case-name>/SKILL.md`、匹配的 `evals/cases/<name>.json`，以及执行型评估所需的 `evals/fixtures/<name>/`；只有技能包含可运行辅助脚本时才添加 `scripts/` 目录（参考资料放在 `references/`，绝不放在技能内部）。确切的前置元数据规则、章节结构和评估用例的最低要求见 [CONTRIBUTING.md](../CONTRIBUTING.md#structure) 和 [skill-anatomy.md](skill-anatomy.md)；从那里获取而非从本导览中获取，以防两者出现偏差。
 
 有一点值得内化而不必查阅：在编写触发提示词时，转述用户实际说话的方式；将描述复制到提示词中是对评估的作弊，对你没有帮助。
 

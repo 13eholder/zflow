@@ -54,7 +54,7 @@ description: zflow 技能选择边界
 alwaysApply: true
 ---
 
-普通代码探索、实现、测试、调试、重构、审查和 Git 操作使用模型原生工作流。
+普通代码探索、实现、测试、调试、普通重构、审查和 Git 操作使用模型原生工作流。
 只有任务明确匹配 `.cursor/skills/` 中的专业领域或要求其文档产物时，才读取对应 SKILL.md。
 同一请求默认只加载一个主技能，不自动串联生命周期。
 ```
@@ -69,6 +69,7 @@ alwaysApply: true
 | 一致性、持久性或恢复承诺 | `consistency-and-durability-verification` |
 | 故障注入或演练 | `failure-injection-testing` |
 | 性能目标或回归 | `performance-optimization` |
+| 代码可运行但复杂难读，且需要保持行为不变地简化 | `code-simplification` |
 | 日志、指标、追踪或告警 | `observability-and-instrumentation` |
 | 废弃或迁移 | `deprecation-and-migration` |
 | 生产发布 | `shipping-and-launch` |

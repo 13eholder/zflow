@@ -15,7 +15,7 @@ git clone https://github.com/13eholder/zflow.git
 gemini skills install /path/to/zflow/skills/
 ```
 
-只为当前工作区安装时，按你的 Gemini CLI 版本使用工作区作用域选项。安装后运行 `/skills list`，确认 13 个技能均可发现。
+只为当前工作区安装时，按你的 Gemini CLI 版本使用工作区作用域选项。安装后运行 `/skills list`，确认 14 个技能均可发现。
 
 ## GEMINI.md 的用途
 
@@ -45,8 +45,9 @@ gemini skills install /path/to/zflow/skills/
 | 规划废弃和消费者迁移 | `deprecation-and-migration` |
 | 准备生产发布 | `shipping-and-launch` |
 | 创建规范、计划、ADR 或来源证据 | 对应的文档技能 |
+| 简化可运行但难读的代码并保持行为不变 | `code-simplification` |
 
-普通实现、缺陷修复、测试编写、代码简化和 diff 审查直接使用 Gemini 的原生能力。
+普通实现、缺陷修复、测试编写和 diff 审查直接使用 Gemini 的原生能力；明确要求保持行为不变地简化复杂代码时，加载 `code-simplification`。
 
 ## 显式加载
 

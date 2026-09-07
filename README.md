@@ -26,7 +26,7 @@
 **最快路径——任何智能体，一条命令。** 开放的 [skills CLI](https://github.com/vercel-labs/skills) 可安装到多个智能体中（Cursor、Codex、Copilot、Cline 等）：
 
 ```bash
-npx skills add 13eholder/zflow            # 安装全部 13 个技能
+npx skills add 13eholder/zflow            # 安装全部 14 个技能
 npx skills add 13eholder/zflow --list     # 安装前浏览
 ```
 
@@ -182,7 +182,7 @@ Codex 通过 `.codex-plugin/plugin.json` 直接读取根目录下的 `skills/` �
 
 ---
 
-## 全部 13 个技能
+## 全部 14 个技能
 
 ### 文档与明确产物
 
@@ -206,6 +206,7 @@ Codex 通过 `.codex-plugin/plugin.json` 直接读取根目录下的 `skills/` �
 | [observability-and-instrumentation](skills/observability-and-instrumentation/SKILL.md)             | 结构化日志、指标、追踪与基于症状的告警  | 设计生产可观测性时               |
 | [deprecation-and-migration](skills/deprecation-and-migration/SKILL.md)                             | 兼容窗口、消费者迁移与安全下线          | 移除旧接口、数据结构或功能时     |
 | [shipping-and-launch](skills/shipping-and-launch/SKILL.md)                                         | 上线检查、灰度、容量、回滚和降级预案    | 准备生产发布时                   |
+| [code-simplification](skills/code-simplification/SKILL.md)                                         | 在保持行为不变的前提下降低代码复杂度    | 代码可运行但难以阅读、维护或扩展时 |
 
 
 ---
@@ -273,7 +274,7 @@ Codex 通过 `.codex-plugin/plugin.json` 直接读取根目录下的 `skills/` �
 
 ```
 zflow/
-├── skills/                            # 13 个按需加载的专业技能
+├── skills/                            # 14 个按需加载的专业技能
 ├── agents/                            # 2 个专业审查角色
 ├── references/                        # 6 个共享参考资料
 ├── commands/                          # 3 个 Antigravity CLI 命令

@@ -1,6 +1,6 @@
 # zflow 入门指南
 
-zflow 适用于任何能够发现或加载 Markdown 技能的 AI 编程智能体。它只补充专业领域和明确文档产物；代码探索、实现、测试、调试、重构、diff 自审与 Git 操作继续使用智能体的原生能力。
+zflow 适用于任何能够发现或加载 Markdown 技能的 AI 编程智能体。它只补充专业领域、明确文档产物和行为保持型代码简化；代码探索、实现、测试、调试、普通重构、diff 自审与 Git 操作继续使用智能体的原生能力。
 
 ## 最快开始
 
@@ -35,8 +35,9 @@ npx skills add 13eholder/zflow --skill api-and-interface-design
 | 明确要求结构化规范 | `spec-driven-development` |
 | 明确要求持久化计划或任务清单 | `planning-and-task-breakdown` |
 | 显式创建或封版一轮工作的 Stage | `stage` |
+| 代码可运行但复杂难读，且需要保持行为不变地简化 | `code-simplification` |
 
-如果请求只是“实现这个功能”“修复这个错误”“写测试”“简化代码”或“审查 diff”，不需要额外技能。
+如果请求只是“实现这个功能”“修复这个错误”“写测试”“普通重构”或“审查 diff”，不需要额外技能；明确要求保持行为不变地简化复杂代码时，使用 `code-simplification`。
 
 ## 如何加载
 

@@ -11,7 +11,7 @@ Windsurf 的长期规则应保持简短。不要把全部 zflow 技能拼接进 
 
 - 构建、测试与 lint 命令：按本仓库文档执行。
 - 修改前检查相邻实现和测试；修改后运行验证并检查 diff。
-- 普通实现、测试、调试、重构和审查使用模型原生工作流。
+- 普通实现、测试、调试、普通重构和审查使用模型原生工作流。
 - 只有任务明确匹配 zflow 的专业领域或文档产物时才加载对应技能。
 - 同一请求默认只使用一个主技能。
 ```
@@ -23,6 +23,7 @@ Windsurf 的长期规则应保持简短。不要把全部 zflow 技能拼接进 
 ```text
 公共 API 或 RPC 契约 → skills/api-and-interface-design/SKILL.md
 尾延迟或吞吐问题   → skills/performance-optimization/SKILL.md
+代码可运行但复杂难读 → skills/code-simplification/SKILL.md
 ADR 或工程文档      → skills/documentation-and-adrs/SKILL.md
 生产发布            → skills/shipping-and-launch/SKILL.md
 ```
