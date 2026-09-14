@@ -45,8 +45,8 @@ npx skills add 13eholder/zflow --skill documentation-and-adrs    # 文档与架�
 
 插件仓库内置 OMP 优先的 `.omp-plugin/marketplace.json`，并提供
 `.claude-plugin/marketplace.json` 作为旧版 OMP 的兼容回退。Marketplace
-安装后会自动加载 `hooks/pre/documentation-skill-prompt.ts`，在每次 Agent
-回合前注入文档技能选择提示；普通编码任务仍按需使用技能。
+安装后技能由 OMP 原生发现：系统提示中只保留各技能的名称与描述，完整
+SKILL.md 在任务匹配时按需读取；普通编码任务不加载技能。
 
 **从 Marketplace 安装**:
 

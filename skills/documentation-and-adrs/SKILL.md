@@ -1,6 +1,6 @@
 ---
 name: documentation-and-adrs
-description: 记录决策和文档。在做出架构决策、修改公共 API、发布功能，或需要记录未来工程师和智能体理解代码库所需的上下文时使用。
+description: 记录决策和文档。在做出架构决策、编写或更新 ADR、README 或 CHANGELOG、修改公共 API 或用户可见行为、发布功能、为 Stage 补齐文档产物，或需要记录未来工程师和智能体理解代码库所需的上下文时使用。
 ---
 
 # 文档与 ADR
