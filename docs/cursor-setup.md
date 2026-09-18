@@ -77,7 +77,7 @@ alwaysApply: true
 | 当前官方来源验证 | `source-driven-development` |
 | 明确要求规范 | `spec-driven-development` |
 | 明确要求持久化计划 | `planning-and-task-breakdown` |
-| 显式创建或封版 Stage | `stage` |
+| 显式创建、修订或封版 Stage | `stage` |
 
 普通功能实现、缺陷修复、测试和代码审查不映射到技能。
 

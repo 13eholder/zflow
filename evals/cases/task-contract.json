@@ -1,5 +1,5 @@
 {
-  "skill_name": "delegated-task-contract",
+  "skill_name": "task-contract",
   "trigger": {
     "positive": [
       {
@@ -30,10 +30,10 @@
     {
       "id": 1,
       "kind": "execution",
-      "prompt": "根据附件中的仓库规则、现有 Stage、已接受 ADR、已批准 Spec 和 TASK-017，创建达到 READY 状态的委派任务契约并准备发送给可写 sub-agent 的完整文本信封。不要实现 TASK-017。",
+      "prompt": "根据附件中的仓库规则、现有 Stage、已接受 ADR、已批准 Spec 和 TASK-017，创建达到 READY 状态的任务契约并准备发送给可写 sub-agent 的完整文本信封。不要实现 TASK-017。",
       "expected_output": "在现有 Stage 的 task-contract 目录中持久化一份最小且达到 READY 的 Task Contract，更新 STAGE.md 前向索引，并准备不重复契约正文的分派信封；契约仅授予 TASK-017 所需 Worker 局部权限并保持已验证 timeout 的 ownership 模型",
       "files": [
-        "delegated-task-contract"
+        "task-contract"
       ],
       "expectations": [
         "唯一解析到现有 Stage 017-worker-lease，并把 Contract 保存为 stages/017-worker-lease/task-contract/TASK-017.md；不创建根级 task-contract 或 tasks/contracts",
@@ -45,7 +45,14 @@
         "STAGE.md 的 Task Contracts 表新增 TASK-017 前向链接并镜像 READY 状态，但不复制 Contract 正文",
         "Contract 正文没有 Stage 字段、STAGE.md 链接或其他反向索引",
         "分派信封包含完整 READY Contract，或给出精确路径并明确要求完整读取",
-        "同一产物不会在独立 Contract 和分派信封之间逐字重复整份契约"
+        "同一产物不会在独立 Contract 和分派信封之间逐字重复整份契约",
+        "Change Targets 精确列出经过源码核对的文件、结构和函数，拟新增符号有标记，每个对象明确当前与目标行为",
+        "Interfaces 明确各变更对象的接口是否变化以及受影响调用方；Postconditions 引用目标行为，避免重复维护",
+        "契约保留函数内部实现自由，不规定无上游依据的调用步骤、分支写法、伪代码或内部算法",
+        "Verification 将目标行为映射到具体测试文件及符号或场景，并覆盖架构合规",
+        "记录父 Task 精确路径及输入版本，并用稳定 AC 编号映射到变更对象、后置条件和验证条目",
+        "Task 只有全部 AC 满足且相关 Contract COMPLETED 才计为交付完成，CANCELLED 不等同验收通过",
+        "分派前要求完整AC映射和验证计划，允许Required Evidence待执行，不要求新行为已有通过证据"
       ]
     },
     {
@@ -58,6 +65,31 @@
         "不会隐式调用 Stage 工作流或自动创建 Stage",
         "不会发送实现分派，因为 READY 门禁尚未满足",
         "明确请求用户选择现有 Stage 或显式创建 Stage，并说明选定后的规范路径为 stages/<stage-id>/task-contract/<task-id>.md"
+      ]
+    },
+    {
+      "id": 3,
+      "kind": "dialogue",
+      "prompt": "TASK-017 的 Contract 已经 READY，但父 Task 新增了 AC-04：取消后必须释放资源，旧 Contract 没覆盖。实现还没完成，直接沿用旧 Contract 继续执行。",
+      "expected_output": "暂停受影响执行，将 READY 回退 DRAFT；核对新增条件和上游架构后更新输入版本、映射及验证，再重新过 READY 门禁",
+      "expectations": [
+        "不沿用旧 READY 状态继续执行",
+        "保留已有 Task/AC 编号，为新增 AC 建立映射",
+        "更新输入版本和验证要求，未决架构语义触发 BLOCKED_BY_ARCHITECTURE",
+        "重新核验完整 READY 门禁后才能继续，并同步 Stage 索引"
+      ]
+    },
+    {
+      "id": 4,
+      "kind": "dialogue",
+      "prompt": "TASK-018 的 sub-agent 已经提交部分预取逻辑，并留下未提交修改。现在取消功能，请将 Contract 标为 CANCELLED。另一个任务也修改了同一个文件。",
+      "expected_output": "终止原契约执行，核对已提交和未提交变更并记录取消原因及处置；只撤回本任务变更或由明确READY契约接管，保留他人改动；未处置时保持Stage阻断",
+      "expectations": [
+        "停止原契约下的继续写入",
+        "变更集同时覆盖已提交和未提交部分",
+        "记录无变更/撤回/接管处置及证据，未完成明确标记处置待完成",
+        "不以撤回为由覆盖用户或其他任务的修改",
+        "CANCELLED不被解释为残留变更已获交付许可"
       ]
     }
   ]

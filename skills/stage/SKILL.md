@@ -1,439 +1,253 @@
 ---
 name: stage
-description: 创建和管理 Stage 文档——串联一轮工作中的所有技能产出物（MISSION、应然文档、实现计划、Task Contract、实然文档、ADR、验证结果），记录应然与实然的差异及其原因，并在封版时提炼学习摘要。当用户显式请求"创建 Stage""开始一个 Stage""封版 Stage"时使用。Stage 创建完全由用户决定，无自动触发条件。
+description: 创建和管理 Stage 文档——串联一轮工作中的所有技能产出物（MISSION、应然文档、实现计划、Task Contract、实然文档、ADR、验证结果），记录应然与实然的差异及其原因，并在封版时提炼学习摘要。当用户显式请求"创建 Stage""开始一个 Stage""修订 Stage""封版 Stage"，或明确要求对指定已封版 Stage 执行增量时使用。Stage 创建完全由用户决定，无自动触发条件。
 ---
 
 # Stage
 
 ## 概述
 
-Stage 是一轮工程变更的**串联文档**——它不是替代任何一个技能产出物，而是记录每个技能产出了什么、这些产出之间是什么关系、以及这一轮变更的完整故事。
-
-Stage 回答四个问题：
-1. **我们本来要做什么？**（MISSION + 应然文档）
-2. **实现工作如何被安全委派？**（Task Contract 前向索引）
-3. **我们实际做成了什么？**（实然文档 + ADR）
-4. **为什么会有差异？**（应然 vs 实然差异 + 学习摘要）
-
-```
-                          STAGE.md
-                   （串联层 / 索引 + 叙事）
-                          │
-    ┌────────┬────────┬────┴────┬────────────┬────────┬────────┐
-    │        │             │    │            │        │        │
-  MISSION  应然文档     实现计划  Task Contract  实然文档   验证
-  (目标)   (设计)      (plan+todo) (委派边界)    (结果)    (证据)
-                                                │
-                                              ADR
-                                      (强制，每个 Stage 至少一篇)
-```
+Stage 是一轮工程变更的索引和叙事：串联目标、设计依据、计划、委派边界、实际结果与验证，记录应然与实然的差异及学习摘要。各产物继续维护自己的权威内容，Stage 保存链接与必要摘要。
 
 ## 何时使用
 
-**Stage 创建完全由用户决定。** 仅在用户显式请求时创建，无自动触发条件。
+- 用户显式要求创建、开始、修订或封版 Stage，或明确要求对指定已封版 Stage 做增量修补。
+- `/plan` 后用户同意创建 Stage；跨任务、新功能、优化、修复或重构可作为建议理由，不能作为自动创建依据。
+- 单个任务、机械修改、纯文档更新均不自动创建。Contract 缺少所属 Stage 时，请求用户选择现有 Stage 或显式创建，不能自动补建。
+- 已明确授权指定 Stage 的修订时无需重复确认；Stage 创建始终由用户决定。
 
-用户通常以以下方式发起：
-- "创建 Stage" / "开始一个 Stage"
-- "为这轮工作建 Stage"
-- "封版 Stage" / "Seal Stage"
-- `/plan` 输出计划后，用户对"是否需要 Stage 文档？"回答"是"
+## 权威边界与共享规则
 
-**典型适用场景**（供用户参考，非触发规则）：
-- 跨越多个任务、构成一个逻辑整体的变更
-- 跨越多个模块的新功能
-- 改变内部结构但行为不变的重构
-- 生产环境缺陷的完整修复链
-- 需要记录架构决策的任何变更
+- MISSION 从 Spec 提取目标；Plan／Task 定义执行安排；ADR 记录架构决定；实然文档与验证说明交付结果。
+- 每个 Stage 至少一篇 ADR，必须在实现前编写并接受；影响后续实现的新决策同样先接受，再将相关 Contract 设为 READY。ADR 以 `documentation-and-adrs` 为准，实现后仅补充实际后果与证据。
+- Contract 正文、状态及 Required Evidence 以 Contract 文件为准；Stage 仅前向索引，Contract 不添加 Stage 字段或回链。
+- 创建／同步 Contract 索引、处理取消变更及任何终态转换前，读取并执行 [Stage 与 Task Contract 联动规则](../../references/stage-task-contract-integration.md)。该文档统一定义归属路径、同步事件、取消处置和封版门禁。
+- Stage 差异表不产生放宽上游要求的权限；规范变更和临时例外按下文先批准后执行。
 
-**不会自动触发：**
-- 单个孤立任务或机械性变更不自动创建
-- 纯文档更新不自动创建
-- Agent 不会根据任务数量或跨模块程度自行判断——必须用户确认
+## 类型与状态
 
-`delegated-task-contract` 需要所属 Stage 时也不得自动触发 Stage 创建；如果尚无 Stage，它必须停下并请求用户显式决定。目录归属、单向索引、状态同步和封版门禁统一遵循 [Stage 与 Task Contract 联动规则](../../references/stage-task-contract-integration.md)。
+| 类型 | 目标与验收重点 | 文档重点 |
+|------|----------------|----------|
+| feat | 新能力符合规范，记录有意义偏离 | Spec、API 契约和实际 API 文档 |
+| opt | 达到指标目标，比较优化前后效果 | 性能基线与结果 |
+| debug | 修复目标实现、根因回归测试通过，应然与实然一致 | 现象、根因、修复与预防 |
+| refactor | 内部结构变化、外部行为保持，应然与实然一致是硬要求 | 架构设计与结构变更 |
 
-## Stage 类型
+| 状态 | 含义 |
+|------|------|
+| draft | 骨架已创建，实现尚未开始 |
+| in-progress | 正在实现；可选使用 |
+| revising | 已封版 Stage 正在修订，属于活动状态 |
+| done | 当前有效任务完成或明确撤销，契约终态、验证通过且已封版 |
+| abandoned | 本轮工作放弃 |
+| superseded | 本轮范围被另一 Stage 覆盖 |
+| split | 本轮拆分为多个 Stage |
 
-| 类型 | 动机 | 成功标准 | 应然 vs 实然 | 文档重心 |
-|------|------|---------|-------------|---------|
-| **feat** | 添加新能力 | 新行为出现且符合规范 | 有差异是正常的，必须记录 | spec + api-contract + api-doc |
-| **opt** | 改善已有行为 | 指标达到目标值 | 简要记录优化效果对比 | 性能基线 + 优化结果 |
-| **debug** | 修复错误行为 | 问题不再复现 + 回归测试覆盖根因路径 | 应然=实然（修复即目标） | 现象 + 根因 + 修复策略 + 预防措施 |
-| **refactor** | 改变内部结构，行为不变 | 所有已有行为保持不变，回归测试全绿 | 应然=实然是硬性要求 | 架构设计 + 结构变更说明 |
+通常路径为 `draft → in-progress → done → revising → done`。活动状态为前三种非终态 `draft`、`in-progress`、`revising`；其余终态的处理见下文。
 
-## Stage 生命周期
+## 工作流
 
-```
-/plan 输出后               实现过程中                    全部实现完成后              /ship 执行时
-     │                          │                            │                      │
-     ▼                          ▼                            ▼                      ▼
-  创建骨架                维护文档与 Contract 索引          封版 STAGE.md            检查 Stage 存在
-  (MISSION +              (状态、偏离、证据摘要)           (终态门禁、实然文档、       (pre-launch
-   应然文档路径、                                         ADR、差异分析、          checklist
-   实现计划链接)                                          验证结果、学习摘要)         阻断项)
-```
+### 1. 创建骨架
 
-### 创建（骨架阶段）
+`/plan` 输出后可询问用户是否需要 Stage。用户确认创建后：
 
-在 `/plan` 输出 `tasks/plan.md` 和 `tasks/todo.md` 后，Agent 询问用户是否需要 Stage 文档。用户确认后：
+1. 建立 `stages/<stage-id>/STAGE.md`，ID 使用 kebab-case 简短标题。
+2. 按下方模板填写类型、日期、决策者、MISSION 和已有产物链接，状态为 `draft`；实现计划引用 `tasks/plan.md` 与 `tasks/todo.md` 的实际位置。
+3. 保留空的 Task Contracts 表，未完成的应然、ADR、实然和验证内容标 TODO；不适用的文档行可删除。
+4. 在 `stages/INDEX.md` 登记本轮工作。
 
-1. 创建 `stages/<stage-id>/` 目录（`stage-id` 为 kebab-case 简短标题）
-2. 创建 `STAGE.md` 骨架，预填：
-   - 类型（feat | opt | debug | refactor）
-   - 状态设为 `draft`
-   - 决策者
-   - MISSION（从 spec 中提取）
-   - 应然文档路径（标记为 TODO）
-   - 实现计划链接（填入 `tasks/plan.md` 和 `tasks/todo.md`）
-   - Task Contracts 前向索引表（初始为空）
-   - 实然文档（标记为 TODO——实现完成后填写）
-   - ADR（标记为 TODO——每个 Stage 至少一篇，实现完成后填写）
-   - 验证结果（标记为 TODO）
-3. 在 `stages/INDEX.md` 中追加一行
+骨架不是编码许可：ADR TODO 必须在实现前清除，并满足前置批准要求。本轮适用的应然文档必须在实现开始前填充并链接，不涉及的文档行可删除。
 
-### 填充（构建阶段）
+### 2. 实现期间维护
 
-在实现过程中：
-- 普通任务完成时无需修改 `STAGE.md`；但 Contract 首次落盘、状态变化或返回 deviation / evidence 时必须同步
-- 当应然文档（spec、api-contract）产出时，更新对应链接，去掉 TODO 标记
-- Contract 只由 `STAGE.md` 前向索引；不要在 Contract 中添加 Stage 字段或回链
-- 非 `none` 的 Contract deviation 同步到“应然 vs 实然差异”表，不等到封版时凭记忆补写
+- 应然文档完成后更新链接并清除 TODO。普通 Task 完成无需逐次修改 Stage。
+- Contract 首次落盘、状态、偏离或证据变化时，按共享规则立即同步索引；镜像冲突以 Contract 为准修复 Stage。
+- 非 `none` 的 Contract deviation 同步到差异表，不留到封版时补记。
+- API、故障注入、一致性和性能等技能的产物按性质链接到应然、实然或验证部分，无需复制正文或自动串联技能。
 
-### 封版（完成后）
+### 3. 处理偏离
 
-所有任务完成且验证通过后，Agent 提醒用户封版。用户确认后：
+| 类别 | 必须执行的动作 |
+|------|----------------|
+| 计划偏离 | 记录执行顺序、工期或允许范围内的实现选择变化；必要时更新 Plan |
+| 规范变更 | 先批准上游变更，更新有效 Spec／接口及相关 ADR，重新核验受影响 Contract，再实现和验收 |
+| 临时例外 | 先批准并明确范围、期限、恢复条件，由当前有效规范引用；未批准不得完成 Contract 或封版 |
 
-1. 对照 `task-contract/` 与索引表，确认没有遗漏、失效链接或状态漂移
-2. 确认所有 Contract 正文状态均为 `COMPLETED` 或 `CANCELLED`；任一 `DRAFT`、`READY` 或 `BLOCKED_BY_ARCHITECTURE` 都会阻止封版
-3. 填充实然文档链接（api-doc、ADR）
-4. 填写**应然 vs 实然差异表**（含"是否回溯更新应然文档"列），纳入 Contract 报告的有意义偏离
-5. 填写验证结果并链接 Contract 的 Required Evidence
-6. 提炼**学习摘要**（"下次这样做"和"下次别这样做"）
-7. 状态改为 `done`
-8. 更新 `stages/INDEX.md` 对应行状态
+差异出现时记录，封版时核对；保留原始基线版本引用，当前有效规范反映批准后的要求。无差异时显式写“无差异”并简述原因。
 
-### 检查（发布前）
+### 4. 封版与发布前检查
 
-`/ship` 的 pre-launch checklist 中包含：
-- "□ 重大变更是否有对应的 Stage 文档？"——如果本轮工作曾创建 Stage，此为阻断项
+有效任务完成并验证、撤销或替代已说明原因后，提醒用户封版。用户确认后：
+
+1. 执行共享规则的完整封版门禁：核对索引、任务验收、Contract 终态及取消残留处置。`CANCELLED` 或接管链接本身不等于交付验收。
+2. 核对前置 ADR 状态，补充实际后果，填实然文档、差异表与验证证据；证据引用 Contract 的 Required Evidence。
+3. 提炼“下次这样做／下次别这样做”，不超过两句话。
+4. 将状态设为 `done`，同步 INDEX。
+
+如果本轮曾创建 Stage，`/ship` 的发布前检查必须核对其存在；这是阻断项。
+
+### 5. 增量修订
+
+用户要求修订或明确授权指定 Stage 的增量后：
+
+1. 新增实现或创建 Contract **之前**，将 `done` 改为 `revising`，同步 INDEX。
+2. 记录原封版基线的版本引用、修订原因和范围，保留历史验收证据。
+3. 引用仍有效的 ADR；新决策先编写并接受。新增工作使用新的稳定 Task ID；需要 Contract 时创建新契约，保留旧终态契约。
+4. 按实现期间规则同步产物，修订期间不得显示为 `done`。
+5. 修订完成后重新执行完整封版流程，经用户确认后回到 `done`；原基线和本次修订证据分别可追溯。
+
+仅补录既有完成工作的历史证据不构成新增实现。多次修订后可建议新建 Stage，但不自动创建；其余终态不通过修订流程重开。
+
+### 6. 非交付终态
+
+先按共享规则完成或取消未完成 Contract，并明确取消残留的撤回或接管归属，再执行：
+
+| 终态 | Stage 必须记录的内容与后续限制 |
+|------|------------------------------|
+| abandoned | MISSION 追加放弃原因；至少一篇 ADR 说明为什么放弃；保留学习摘要。已完成部分是否回滚由决策者决定并记录 ADR；下一轮计划写“无（已放弃）” |
+| superseded | MISSION 写明被谁取代及原因，关联中链接目标 Stage；后续工作转移过去，原 Stage 不追加增量 |
+| split | MISSION 说明拆分结果，关联中链接子 Stage；后续工作转移到子 Stage，原 Stage 不追加增量 |
+
+同步 INDEX。非交付终态中的接管仅表示责任转移，不构成变更验收或交付许可。
 
 ## Stage 模板
 
-以下是 `stages/<stage-id>/STAGE.md` 的规范模板：
+下列模板用于 `stages/<stage-id>/STAGE.md`。标准 MISSION 用于 feat／opt／refactor；debug 改用“现象、影响、根因假设、修复策略、成功标准”，实现后将根因假设更新为确认根因。修复策略包含止血、根因修复与预防，成功标准包含不再复现、根因路径回归覆盖和同类问题静态检查。
 
 ```markdown
 # Stage: [简短标题]
 
 **类型**: feat | opt | debug | refactor
 **日期**: YYYY-MM-DD — YYYY-MM-DD
-**状态**: draft | in-progress | done | abandoned | superseded | split
+**状态**: draft | in-progress | revising | done | abandoned | superseded | split
 **决策者**: @username
-
----
 
 ## MISSION（本轮目标）
 
-<!-- feat / opt / refactor 使用标准 MISSION -->
-
-- **目标**: [一句话描述本轮要达成什么]
-- **用户**: [谁会受益]
-- **成功标准**: [如何知道完成了——具体、可验证的条件]
-- **约束**: [绑定限制——技术、资源、时间]
-- **不做**: [显式排除的内容及原因]
-
-<!-- debug 类型替换为以下结构：-->
-<!--
-- **现象**: [用户做了什么、看到了什么、应该看到什么]
-- **影响**: [影响范围、持续时间、数据完整性风险]
-- **根因假设**: [初步判断——实现完成后更新为确认根因]
-- **修复策略**: [止血方案 + 根因修复 + 预防措施]
-- **成功标准**: [问题不再复现、回归测试覆盖根因路径、同类问题有静态检查]
--->
-
-→ 详见 [MISSION.md](./MISSION.md)
-
----
+- 目标：[本轮达成什么]
+- 用户：[受益方]
+- 成功标准：[可验证条件]
+- 约束：[技术、资源、时间限制]
+- 不做：[排除内容及原因]
 
 ## 应然文档（我们计划怎么做）
 
 | 文档 | 来源技能 | 说明 |
-|------|---------|------|
-| [spec/xxx.md](./spec/xxx.md) | spec-driven-dev | 功能规范 |
-| [design/api-contract.md](./design/api-contract.md) | api-and-interface | API 契约 |
-| [design/xxx.md](./design/xxx.md) | — | [补充说明] |
+|------|----------|------|
+| [Spec](./spec/xxx.md) | spec-driven-development | 功能规范 |
+| [API 契约](./design/api-contract.md) | api-and-interface-design | 接口与协议 |
 
-> 实现开始前填充。若某类文档本轮不涉及，删除对应行。
+## ADR（实现前决策，必填）
 
----
+| ADR | 状态 | 决策内容 | 适用任务／修订 |
+|-----|------|----------|---------------|
+| [ADR-XXX](./docs/adr/XXX.md) | [当前状态] | [摘要] | [Task ID 或修订号] |
 
 ## 实现计划
 
 | 文档 | 来源技能 | 说明 |
-|------|---------|------|
-| [tasks/plan.md](./tasks/plan.md) | planning-and-task | 技术方案 |
-| [tasks/todo.md](./tasks/todo.md) | planning-and-task | 原子任务列表 |
-
----
+|------|----------|------|
+| [Plan](./tasks/plan.md) | planning-and-task-breakdown | 执行安排 |
+| [Task](./tasks/todo.md) | planning-and-task-breakdown | 任务列表 |
 
 ## Task Contracts（委派执行边界）
 
-> 仅索引需要 `delegated-task-contract` 门禁的可写委派。Contract 正文、状态和 Required Evidence 以对应文件为准；本表只保存前向链接与摘要，不把 Stage 回链写入 Contract。
-
 | Task | Contract | 状态 | Deviation / Evidence |
 |------|----------|------|----------------------|
-| [Task ID] | [Task ID](./task-contract/TASK-XXX.md) | DRAFT \| READY \| BLOCKED_BY_ARCHITECTURE \| COMPLETED \| CANCELLED | [阻断、偏离、证据或取消原因；无则写 `—`] |
-
-> 尚无 Contract 时保留表头并删除示例行。Contract 首次落盘及每次状态、偏离或证据变化后同步本表。
-
----
+| [Task ID] | [Task ID](./task-contract/TASK-XXX.md) | [正文状态的镜像] | [偏离、证据、阻断或取消处置摘要] |
 
 ## 实然文档（我们实际做成了什么样）
 
-> 实现完成后填充本节。
-
 | 文档 | 来源技能 | 说明 |
-|------|---------|------|
-| [docs/api/xxx.md](./docs/api/xxx.md) | documentation-and-adrs | 实际 API 文档 |
-| [docs/adr/XXX-title.md](./docs/adr/XXX-title.md) | documentation-and-adrs | 架构决策记录（必填，每个 Stage 至少一篇） |
-
-### ADR（必填）
-
-每个 Stage **必须**产出至少一篇 ADR。ADRs 记录关键的架构决策及其上下文。
-
-| ADR | 决策内容 | 替代方案 |
-|-----|---------|---------|
-| [ADR-XXX](./docs/adr/XXX.md) | [一句话描述决策] | [被拒绝的方案及原因] |
-
-**ADR 内容要求：**
-- 记录"为什么选择 A 而不是 B"
-- 列出被考虑并拒绝的替代方案及拒绝原因
-- 描述决策的约束条件和后果
-- 如果该决策与已有 ADR 相关，显式引用
-
-**不同类型 Stage 的 ADR 重心：**
-
-| Stage 类型 | ADR 典型内容 |
-|-----------|-------------|
-| **feat** | 为什么选这个架构/框架/协议；数据模型的设计取舍 |
-| **opt** | 为什么选这个优化策略；为什么不选其他方案（如缓存 vs 索引优化） |
-| **debug** | 根因为什么会产生；为什么选这个修复方案；预防措施的设计 |
-| **refactor** | 为什么选这个新结构；为什么不统一某些边界情况；新旧结构的对比 |
-
----
+|------|----------|------|
+| [API 文档](./docs/api/xxx.md) | documentation-and-adrs | 实际 API |
 
 ## 应然 vs 实然差异
 
-> 实现完成后填写。记录计划与实际之间的每个有意义的偏离。
-
-Contract 的 `Required Evidence` 报告非 `none` deviation 时，在验收该 Contract 的同时把偏离同步到本表；不要只在 Contract 中留痕。
-
-| 差异 | 应然（计划） | 实然（结果） | 原因 | 是否回溯更新应然文档 |
-|------|------------|------------|------|-------------------|
-| [简述] | [计划怎么做] | [实际怎么做] | [为什么偏离] | 是 / 否 |
-
-**"是否回溯更新应然文档"列说明：**
-- **是**：该差异被认定为正确的设计方向，已回头修改 spec 或 api-contract 使其与实然一致
-- **否**：该差异是临时妥协或折中，应然文档保留原样以便后续 Stage 参考
-- 所有标"否"的差异行是下一轮 backlog 的候选输入
-
----
+| 差异类型 | 原始基线 | 实际结果 | 原因 | 批准依据／当前有效来源 | 后续事项 |
+|----------|----------|----------|------|----------------------|----------|
+| [计划偏离／规范变更／临时例外] | [版本和条目] | [结果] | [原因] | [来源；计划偏离可写不适用] | [恢复条件／Task] |
 
 ## 验证结果
 
 | 检查项 | 状态 | 证据 |
 |--------|------|------|
-| [验收标准 1] | ✅ / ❌ | [测试报告、性能数据、截图等] |
-| [验收标准 2] | ✅ / ❌ | [证据] |
-| 无回归 | ✅ / ❌ | CI 运行链接 |
-
-→ 详见 [VERIFY.md](./VERIFY.md)
-
----
+| [验收标准] | [通过／失败] | [报告或证据链接] |
+| 无回归 | [通过／失败] | [CI 或验证证据] |
 
 ## 学习摘要
 
-> 封版时填写。不超过两句话。
-
-- **下次这样做**：[本轮做对了什么——值得在其他 Stage 中复用]
-- **下次别这样做**：[本轮做错了什么——应该避免、警惕或改进]
-
----
+- 下次这样做：[可复用经验]
+- 下次别这样做：[具体教训]
 
 ## 关联
 
-- **上一轮 Stage**: [STAGE-XXX](../stage-XXX/STAGE.md)（或"无"）
-- **下一轮计划**: [简述，或"无"]
+- 上一轮 Stage：[链接或无]
+- 下一轮计划：[简述或无]
 ```
 
----
+所有文档链接必须指向实际产物；示例路径按仓库约定替换。尚无 Contract 时删除示例行并保留表头，仅索引需要委派门禁的契约。ADR 被取代时保留历史链接并明确当前生效项。
 
-## 增量（封版后追加）
-
-Stage 封版（状态变为 `done`）后，如果发现小问题需要修补，但不构成一个新的 Stage，可在 STAGE.md 末尾追加增量章节：
+修订时在 Stage 追加下列记录；Contract 仍由统一索引表维护：
 
 ```markdown
----
+## 修订 N（YYYY-MM-DD）
 
-## 增量 1（2026-07-28）
-
-- **变更**: [简述修补了什么]
-- **原因**: [为什么封版后还需要这个修补]
-- **影响范围**: [哪些文件/模块]
+- 原封版基线：[版本引用]
+- 原因与范围：[内容及原因]
+- ADR：[适用或新增 ADR]
+- 新增任务：[Task ID 和链接]
+- 验证与封版结果：[证据、封版日期；修订中写待完成]
 ```
 
-追加增量时：
-- Stage 状态保持 `done`，不退回 `in-progress`
-- 增量条目按时间顺序追加
-- 如果修补涉及新的 ADR 决策，追加到实然文档的 ADR 表中并标注 `[增量 1]`
-- 累计 3 个以上增量时，考虑是否应该新建一个 Stage 而非继续追加
+## 目录与 INDEX
 
----
+规范位置为 `stages/<stage-id>/STAGE.md`；Contract 必须在同一 Stage 的 `task-contract/`，与 `tasks/`、`spec/`、`design/`、`docs/`、`verify/` 平级。
 
-## INDEX.md
+其余目录是推荐布局，可沿用仓库约定：`tasks/plan.md`、`tasks/todo.md`，ADR 在 `docs/adr/`，实际 API／协议文档在 `docs/`，证据在 `verify/`。复杂目标可另设 `MISSION.md`，详细验证可另设 `VERIFY.md`，创建后从 Stage 链接。
 
-`stages/INDEX.md` 是所有 Stage 的导航入口。每个 Stage 创建和封版时维护。
+`stages/INDEX.md` 是导航入口：创建时登记 `draft`；封版、修订开始及其他状态变化时同步状态；封版日期记录当前结果，Stage 内保留历次基线与修订证据。“涉及模块”列顶层模块／目录。
 
 ```markdown
 # Stage 索引
 
 | ID | 标题 | 类型 | 状态 | 涉及模块 | 日期 |
-|----|------|------|------|---------|------|
-| 001 | raft-election-optimization | opt | done | consensus, rpc | 2026-07-15 — 2026-07-17 |
-| 002 | wal-checksum-verification | feat | done | storage, wal | 2026-07-18 — 2026-07-20 |
-| 003 | replica-sync-refactor | refactor | done | replication, net | 2026-07-22 — 2026-07-23 |
-| 004 | multi-az-placement | feat | abandoned | placement, scheduler | 2026-07-23 |
+|----|------|------|------|----------|------|
+| 001 | raft-election-optimization | opt | done | consensus, rpc | YYYY-MM-DD — YYYY-MM-DD |
 ```
-
-**维护规则：**
-- Stage 创建时追加一行，状态为 `draft`
-- Stage 封版时更新状态为 `done`
-- Stage 状态变为 `abandoned`、`superseded` 或 `split` 时同步更新
-- `涉及模块` 列出受影响的顶层模块/目录，便于按模块检索
-
----
-
-## 状态模型
-
-| 状态 | 含义 | 何时使用 |
-|------|------|---------|
-| `draft` | 骨架已创建，实现尚未开始 | Stage 创建后 |
-| `in-progress` | 正在实现中 | 实现期间（可选使用） |
-| `done` | 按计划完成，已封版 | 所有任务完成、验证通过、学习摘要已写 |
-| `abandoned` | 中途放弃 | 方向错了、需求取消、被更高优先级打断 |
-| `superseded` | 被另一个 Stage 覆盖 | Stage-B 的范围吞掉了 Stage-A |
-| `split` | 拆分成了多个更小的 Stage | Stage 过大，拆分为独立子 Stage |
-
-**`abandoned` 的处理：**
-- 更新 MISSION 章节，追加一段"放弃原因"
-- ADR 表中至少保留一篇，记录"为什么不继续做"
-- 学习摘要照常填写——放弃的教训往往比成功的更有价值
-- 被放弃的 Stage 中已完成的部分代码/文档是否需要回滚，由决策者决定并在 ADR 中记录
-- `关联` 章节的"下一轮计划"改为"无（已放弃）"
-
-**`superseded` 的处理：**
-- 更新 MISSION 章节，追加一段"被哪个 Stage 取代及原因"
-- 在 `关联` 章节添加"被取代于: [STAGE-XXX](../stage-XXX/STAGE.md)"
-- 状态改为 `superseded`
-- 不在被取代的 Stage 上继续追加增量——所有后续工作转移到取代它的 Stage
-
-**`split` 的处理：**
-- 更新 MISSION 章节，追加一段"拆分为哪些子 Stage 及原因"
-- 在 `关联` 章节添加"拆分为: [STAGE-XXX](../stage-XXX/STAGE.md), [STAGE-YYY](../stage-YYY/STAGE.md)"
-- 状态改为 `split`
-- 原始 Stage 不再追加增量——所有工作转移到子 Stage
-
-## 目录结构
-
-```
-stages/
-  INDEX.md                      ← 索引，每行一个 Stage
-  001-raft-election-optimization/
-    STAGE.md                    ← Stage 串联文档
-    MISSION.md                  ← 详细目标描述（可选，复杂项目推荐）
-    spec/                       ← 应然：功能规范
-    design/                     ← 应然：协议契约、数据布局
-    tasks/
-      plan.md                   ← 实现计划
-      todo.md                   ← 任务列表
-    task-contract/              ← 委派执行边界，与 tasks/spec 平级
-      TASK-001.md
-      TASK-002.md
-    docs/
-      protocol/                 ← 实然：协议文档、RPC 接口
-      adr/                      ← 实然：架构决策记录（必填）
-    verify/                     ← 验证证据
-      fault-injection-report.md
-      consistency-check.txt
-      perf-before-after.json
-  002-wal-checksum/
-    ...
-    ...
-```
-
-> 除 Task Contract 的归属路径外，目录结构是推荐范式。核心约束是：**STAGE.md 必须存在**，**每个 Stage 至少包含一篇 ADR**；如果存在 Task Contract，它必须位于该 Stage 的 `task-contract/` 下并由 `STAGE.md` 前向索引。
-
-## 与其他技能的交互
-
-| 技能 | 交互方式 |
-|------|---------|
-| **spec-driven-development** | Stage 的 MISSION 从 spec 的 Objective 提取 |
-| **planning-and-task-breakdown** | `/plan` 输出后，Agent 询问是否创建 Stage 骨架 |
-| **delegated-task-contract** | Contract 保存到当前 Stage 的 `task-contract/`；`STAGE.md` 单向索引其状态、偏离和证据，Contract 不反向索引 Stage |
-| **api-and-interface-design** | 应然文档中的协议契约（gRPC/protobuf）和实然文档中的接口文档都链接到 Stage |
-| **failure-injection-testing** | 涉及容错与故障恢复时，故障注入方案和混沌实验报告链接到 Stage 实然文档 |
-| **consistency-and-durability-verification** | 涉及存储或状态复制时，一致性/持久性校验报告链接到 Stage 验证结果 |
-| **智能体原生实现流程** | 全部任务完成并验证后，Agent 提醒封版 Stage |
-| **documentation-and-adrs** | ADR 是 Stage 的必填产出；每个 Stage 至少一篇 |
-| **shipping-and-launch** | `/ship` 检查 Stage 是否存在（本轮曾创建则阻断） |
 
 ## 常见合理化借口
 
-| 合理化借口 | 现实 |
-|-----------|------|
-| "这轮改动太小，不需要 Stage" | 如果改动小到不需要 Stage，那它可能也不需要 ADR。但用户已经决定创建 Stage——相信用户的判断。 |
-| "需求太简单，应然和实然不会有什么差异" | 差异无处不在——即使最简单的变更也可能在实现中偏离计划。Stage 的核心价值恰好是记录这些差异。 |
-| "先把代码写了，Stage 之后补" | 封版前的 Stage 是活的目录，不需要一次性写完。但事后补写意味着差异分析依赖记忆——记忆是不可靠的。 |
-| "这个不需要 ADR" | 每个 Stage 都有至少一个值得记录的决策——哪怕只是"我们选择了最简单的实现方式，因为当前约束不允许更复杂的方案"。 |
-| "已经 `abandoned` 了，学习摘要没意义" | 放弃的教训往往比成功的更有价值。记录"为什么放弃"至少和记录"为什么成功"同等重要。 |
-| "差异表里标'否'就够了，不需要解释" | 差异表的每一行都是未来决策的输入。标"否"的行告诉下一个接手的人"这里有技术债，而且是有意留下的"。 |
-| "INDEX.md 可以以后补" | INDEX.md 的价值随 Stage 数量增长——第一个 Stage 时不觉得，第十个时就成了必需品。从一开始就维护。 |
+| 合理化借口 | 处理原则 |
+|------------|----------|
+| “改动小，已创建的 Stage 不需要 ADR” | 既定 Stage 的 ADR 前置要求仍然适用 |
+| “先实现，之后补文档与差异” | 决策先于实现，差异出现即记录；避免事后重建依据 |
+| “临时妥协写入差异表即可封版” | 上游先批准，Contract 重新核验，差异表只记录依据 |
+| “取消或转交后就可以交付” | 原交付中的残留变更仍须有完成验收或撤出证据 |
+| “放弃了就不写学习摘要” | 保留放弃原因、决策与可复用教训 |
 
 ## 红旗警告
 
-- 创建了 STAGE.md 但 MISSION 为空——骨架的价值在 MISSION，没有目标的 Stage 只是占位符
-- 实然文档有 API 文档但没有对应 ADR——违反了"每个 Stage 至少一篇 ADR"的规则
-- 差异表为空但用户提到过实现中的偏离——差异没有被捕获
-- 学习摘要写"无"或"一切顺利"——每个 Stage 都有教训，找不到说明反思不够深
-- `abandoned` 的 Stage 没有"放弃原因"——丢失了最有价值的信息
-- INDEX.md 中某行长期处于 `draft` 状态——要么推进实现，要么标记为 `abandoned`，不要让骨架腐烂
-- 增量章节累计 3+ 条但未考虑拆分新 Stage——说明本轮范围判断有误，应反思而非继续追加
-- 决策者字段为空——多人协作时这会导致决策追溯链断裂
-- `task-contract/` 中存在未被 `STAGE.md` 索引的文件，或索引链接指向不存在的 Contract
-- Contract 状态、deviation 或 evidence 已变化，但 Stage 表格仍保留旧摘要
-- Contract 反向链接 `STAGE.md`，导致所属关系被双向维护
-- 仍有 `DRAFT`、`READY` 或 `BLOCKED_BY_ARCHITECTURE` Contract 就把 Stage 标记为 `done`
+- MISSION 或决策者为空，或者 INDEX 长期停留在与实际不符的状态。
+- 实现先于 ADR 接受；Stage 仍为 `done` 就开始增量或创建新 Contract。
+- 已知偏离未记录，或当前有效规范仍未反映已批准变更。
+- 索引遗漏、失效或镜像漂移；Contract 反向链接 Stage。
+- 以取消状态或接管链接代替残留变更验收。
+- 学习摘要只有“无”或“一切顺利”，没有具体经验或教训。
 
 ## 验证
 
-创建 Stage 骨架后：
-- [ ] `stages/<stage-id>/STAGE.md` 存在
-- [ ] Stage 类型（feat | opt | debug | refactor）已填写
-- [ ] 状态为 `draft`
-- [ ] 决策者已填写
-- [ ] MISSION 已填写（标准格式或 debug 格式，根据类型选择）
-- [ ] 实现计划链接指向 `tasks/plan.md` 和 `tasks/todo.md`
-- [ ] “Task Contracts（委派执行边界）”章节和空的前向索引表已创建
-- [ ] `stages/INDEX.md` 已追加对应行
+创建后：
+- [ ] STAGE.md 已按模板建立，类型、日期、决策者、MISSION 和 `draft` 状态明确。
+- [ ] 已有设计与计划链接有效，待办内容标 TODO，Contract 表已初始化，INDEX 已登记。
 
-封版 Stage 后：
-- [ ] 实然文档链接已填充
-- [ ] ADR 至少一篇，已链接到实然文档表
-- [ ] 应然 vs 实然差异表已填写（无差异则显式写"无差异"并简要说明原因）
-- [ ] 差异表中每行都标了"是否回溯更新应然文档"
-- [ ] 验证结果表已填写，每个检查项有状态和证据
-- [ ] `task-contract/` 中每份 Contract 都被前向索引，且 Contract 中没有 Stage 字段或回链
-- [ ] 索引镜像状态与 Contract 正文一致，所有 Contract 均为 `COMPLETED` 或 `CANCELLED`
-- [ ] Contract 的 deviation、完成证据和取消原因已同步到对应摘要或差异章节
-- [ ] 学习摘要已填写（两句话，非空泛）
-- [ ] 状态改为 `done`（或其他终态）
-- [ ] `stages/INDEX.md` 对应行状态已同步更新
+实现或修订开始前：
+- [ ] 适用 ADR 已先接受；修订已转为 `revising` 并同步 INDEX，原基线与证据已保留。
+- [ ] 本轮适用的应然文档已在实现前填充并链接，不适用项已删除。
+- [ ] 新工作使用新 Task ID；需要 Contract 时创建新契约，历史终态契约未被覆盖。
+
+封版或其他终态前：
+- [ ] 已执行共享联动规则对应门禁，索引完整且镜像一致，取消残留有处置证据。
+- [ ] 对 `done`：有效任务已验收、实然和差异记录完整、验证通过；交付残留已验收或撤出。
+- [ ] 对其他终态：原因、关联去向、ADR 与学习摘要按终态规则处理，残留变更归属明确。
+- [ ] 学习摘要不超过两句话且具体；终态、日期和 INDEX 已同步，修订保留历史证据。

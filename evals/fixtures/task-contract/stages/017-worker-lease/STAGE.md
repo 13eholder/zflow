@@ -6,7 +6,7 @@
 
 ## MISSION
 
-让 Worker 消费已经由 API 验证并由 Scheduler 透传的租约超时，在到期时取消任务、释放本地资源并返回既有错误。
+让 Worker 消费已经由 API 验证并由 Scheduler 透传的租约超时，在到期时取消任务、释放本地资源并以既有错误拒绝返回的 Promise。
 
 ## 应然文档
 

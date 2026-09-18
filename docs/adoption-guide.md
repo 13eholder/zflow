@@ -30,7 +30,7 @@ zflow 的目标不是接管智能体的完整开发流程，而是在模型原�
 | 框架决策依赖记忆而非当前官方资料 | `source-driven-development` |
 | 团队明确需要可评审规范 | `spec-driven-development` |
 | 团队明确需要持久化实施计划 | `planning-and-task-breakdown` |
-| 可写实现任务委派后经常偏离具体 Stage 的既定架构或模块职责 | `delegated-task-contract` |
+| 可写实现任务委派后经常偏离具体 Stage 的既定架构或模块职责 | `task-contract` |
 | 一轮工作需要跨产物归档 | `stage` |
 | 代码可运行但复杂难读，且需要保持行为不变地简化 | `code-simplification` |
 

@@ -192,8 +192,8 @@ Codex 通过 `.codex-plugin/plugin.json` 直接读取根目录下的 `skills/` �
 | [source-driven-development](skills/source-driven-development/SKILL.md)     | 依据官方来源验证框架或库相关决策         | 需要当前、可引用的权威资料时       |
 | [spec-driven-development](skills/spec-driven-development/SKILL.md)         | 生成目标、约束、验收标准与边界明确的规范 | 用户明确需要功能规范时             |
 | [planning-and-task-breakdown](skills/planning-and-task-breakdown/SKILL.md) | 从规范生成依赖排序的实施计划             | 用户明确需要持久化计划或任务清单时 |
-| [delegated-task-contract](skills/delegated-task-contract/SKILL.md)         | 在具体 Stage 内固化子智能体的执行权限与边界 | 委派受架构约束的可写实现任务前     |
-| [stage](skills/stage/SKILL.md)                                             | 串联一轮工作的规范、Contract、ADR、验证与学习摘要 | 用户显式要求创建或封版 Stage 时    |
+| [task-contract](skills/task-contract/SKILL.md)         | 在具体 Stage 内定义精确变更、接口与执行边界 | 委派受架构约束的可写实现任务前     |
+| [stage](skills/stage/SKILL.md)                                             | 串联一轮工作的规范、Contract、ADR、验证与学习摘要 | 用户显式要求创建、修订或封版 Stage 时    |
 
 ### 作为拓展的核心能力
 

@@ -37,7 +37,10 @@
         "Every task has acceptance criteria",
         "Tasks are ordered by dependency",
         "Tasks are vertical slices rather than horizontal layers",
-        "No implementation code is written during planning"
+        "No implementation code is written during planning",
+        "Task IDs and acceptance-condition IDs remain stable when tasks are reordered",
+        "Architecture decisions are referenced from accepted ADRs; unresolved choices remain open questions",
+        "When a Contract exists, verification references its AC mapping rather than duplicating commands"
       ]
     }
   ]

@@ -44,7 +44,7 @@
 
 ## 委派可写实现任务
 
-当主智能体把受已批准 Spec、ADR、冻结接口、模块 ownership 或共享 invariant 约束的实现工作交给可写 sub-agent 时，先使用 `delegated-task-contract`。Contract 归属于一个能够唯一确定的现有 Stage，固定保存到 `stages/<stage-id>/task-contract/<task-id>.md`，并由 `STAGE.md` 前向索引；Contract 不添加 Stage 字段或回链。只有契约达到 `READY`，并且完整契约文本（或精确路径与完整读取要求）随任务一起发送后，才进行分派。
+当主智能体把受已批准 Spec、ADR、冻结接口、模块 ownership 或共享 invariant 约束的实现工作交给可写 sub-agent 时，先使用 `task-contract`。Contract 归属于一个能够唯一确定的现有 Stage，固定保存到 `stages/<stage-id>/task-contract/<task-id>.md`，并由 `STAGE.md` 前向索引；Contract 不添加 Stage 字段或回链。只有契约达到 `READY`，并且完整契约文本（或精确路径与完整读取要求）随任务一起发送后，才进行分派。
 
 如果不存在 Stage 或候选不唯一，暂停分派并请求用户选择现有 Stage 或显式创建 Stage；不要隐式创建。Contract 状态、偏离和证据变化时同步 `STAGE.md` 摘要，任何非 `COMPLETED` / `CANCELLED` Contract 都会阻止 Stage 封版为 `done`。
 

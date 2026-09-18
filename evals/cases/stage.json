@@ -13,6 +13,10 @@
       {
         "prompt": "开始一个 Stage 来串联这轮变更的所有文档",
         "top_k": 3
+      },
+      {
+        "prompt": "修订已封版的 Stage，为增量修补恢复活动状态",
+        "top_k": 3
       }
     ],
     "negative": [
@@ -38,7 +42,8 @@
         "实现计划后包含 Task Contracts（委派执行边界）章节和空的前向索引表",
         "目录示例把 task-contract/ 放在具体 Stage 内并与 tasks/、spec/ 平级",
         "INDEX.md 已新增对应 Stage 行",
-        "ADR 章节被标记为必填"
+        "ADR 章节被标记为必填",
+        "明确 ADR 必须在相关实现和 Contract READY 前编写并接受，不能实现后补写决策依据"
       ]
     },
     {
@@ -51,6 +56,52 @@
         "不通过只修改 STAGE.md 镜像状态来绕过 Contract 正文",
         "要求 TASK-32 完成验收后标记 COMPLETED，或在任务确实撤销、替代或转移时记录原因并标记 CANCELLED",
         "在阻断解除前不会把 Stage 或 stages/INDEX.md 标记为 done"
+      ]
+    },
+    {
+      "id": 3,
+      "kind": "dialogue",
+      "prompt": "Stage storage-read 已经 done。现在就在这个 Stage 做一项新的读取错误处理修补并委派实现；沿用现有已接受 ADR。请先安排增量，不要实际编码。",
+      "expected_output": "先将指定 Stage 从 done 转为 revising 并同步 INDEX，记录原封版基线，为增量分配新 Task ID 和 Contract，保留旧终态契约与证据",
+      "expectations": [
+        "复用明确指定的 Stage，不自动创建新 Stage",
+        "新建增量 Contract 或执行实现之前将 Stage 和 INDEX 状态改为 revising",
+        "保留原封版基线与已完成 Contract，增量使用新 Task ID",
+        "确认适用 ADR 已接受；新架构选择必须先写并接受 ADR",
+        "说明修订完成后需重新通过全部封版门禁才能返回 done"
+      ]
+    },
+    {
+      "id": 4,
+      "kind": "dialogue",
+      "prompt": "Spec 要求保留底层 I/O 错误，但实现仍返回 NotFound。没有批准过这个变化。把它在 Stage 中记为临时妥协、保持 Spec 不变，然后封版。",
+      "expected_output": "识别规范不合规，记录问题但不把差异表当作授权；要求修复或先批准上游变更并重新核验契约，阻止封版",
+      "expectations": [
+        "区分规范偏离与普通计划偏离",
+        "不会只登记差异就将 Contract 置为 COMPLETED 或 Stage 置为 done",
+        "指出临时例外需要先批准并明确范围、期限、恢复条件及当前有效来源"
+      ]
+    },
+    {
+      "id": 5,
+      "kind": "dialogue",
+      "prompt": "封版 Stage A。TASK-018 已 CANCELLED，但其预取逻辑仍保留在这次交付里，现有回归测试全绿；剩余有效任务均已完成，没有后续任务接管。",
+      "expected_output": "阻止封版，指出取消残留尚无归属与验收，要求撤回并验证或由后续READY契约接管且验收完成",
+      "expectations": [
+        "取消原因及现有回归通过不足以解除封版阻断",
+        "明确本次交付仍保留的取消变更必须有验收证据",
+        "不将Stage和INDEX改为done"
+      ]
+    },
+    {
+      "id": 6,
+      "kind": "dialogue",
+      "prompt": "Stage A 的取消任务已把改动交给 Stage B 的 READY Contract，B 已接受具体改动但尚未完成验收。A 本次交付仍保留这些改动。现在封版 A。",
+      "expected_output": "跨Stage接管没有替代验收，保持A封版阻断，直到接管契约COMPLETED或改动从A交付撤出并验证",
+      "expectations": [
+        "辨别READY接管与COMPLETED验收",
+        "跨Stage链接本身不解除本次交付封版阻断",
+        "允许有证据地撤出本次交付后按其余门禁评估，不要求擅自删除其他任务的改动"
       ]
     }
   ]
