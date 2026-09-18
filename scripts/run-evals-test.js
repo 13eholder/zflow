@@ -67,6 +67,28 @@ function run(root, args = []) {
   });
 }
 
+test('Chinese quantity words do not route unrelated requests to migration skills', () => {
+  const root = makeSandbox();
+  writeSkill(root, 'migration-skill', '管理弃用和迁移。在将用户从一个实现迁移到另一个实现时使用。');
+  const cases = completeCase('migration-skill', '迁移旧实现');
+  cases.trigger.negative = [
+    { prompt: '给网关加一个健康检查端点' },
+    { prompt: '添加一个按钮' },
+  ];
+  writeJson(path.join(root, 'evals', 'cases', 'migration-skill.json'), cases);
+
+  const result = run(root, ['--min-rank1', '100']);
+
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+
+  // Domain terms must still cause a real match; filtering must not disable negatives.
+  cases.trigger.negative[0].prompt = '迁移一个旧实现';
+  writeJson(path.join(root, 'evals', 'cases', 'migration-skill.json'), cases);
+  const domainMatch = run(root);
+  assert.equal(domainMatch.status, 1, domainMatch.stdout + domainMatch.stderr);
+  assert.match(domainMatch.stdout, /ranked #1 for a negative prompt/);
+});
+
 test('fails when a skill has no eval case file', () => {
   const root = makeSandbox();
   writeSkill(root, 'alpha-skill', 'Handles alpha widgets. Use when changing alpha widgets.');
