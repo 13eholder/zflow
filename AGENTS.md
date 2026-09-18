@@ -35,7 +35,8 @@ OpenCode 从本仓库的 `skills/` 目录发现技能。技能用于补充模型
 - 明确要求规范 → `spec-driven-development`
 - 明确要求持久化实施计划或任务清单 → `planning-and-task-breakdown`
 - 将已批准的 Spec、ADR 或冻结接口下的实现任务委派给可写 sub-agent → `task-contract`
-- 文档或 ADR → `documentation-and-adrs`
+- 用户显式指定调用 `init-agent-harness` → 初始化项目文档与渐进式入口；禁止主动调用
+- 单份文档或 ADR → `documentation-and-adrs`
 - 需要官方来源验证 → `source-driven-development`
 - 用户显式要求创建、修订或封版 Stage → `stage`
 

@@ -26,7 +26,7 @@
 **最快路径——任何智能体，一条命令。** 开放的 [skills CLI](https://github.com/vercel-labs/skills) 可安装到多个智能体中（Cursor、Codex、Copilot、Cline 等）：
 
 ```bash
-npx skills add 13eholder/zflow            # 安装全部 14 个技能
+npx skills add 13eholder/zflow            # 安装全部 15 个技能
 npx skills add 13eholder/zflow --list     # 安装前浏览
 ```
 
@@ -182,13 +182,14 @@ Codex 通过 `.codex-plugin/plugin.json` 直接读取根目录下的 `skills/` �
 
 ---
 
-## 全部 14 个技能
+## 全部 15 个技能
 
 ### 文档与明确产物
 
 | 技能                                                                       | 功能                                     | 何时使用                           |
 | -------------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------- |
 | [documentation-and-adrs](skills/documentation-and-adrs/SKILL.md)           | 创建和维护工程文档与 ADR                 | 交付物本身是文档或决策记录时       |
+| [init-agent-harness](skills/init-agent-harness/SKILL.md)                  | 提取七类工程知识，在 `.agents/docs/` 建立渐进式文档体系 | 仅在用户显式指定调用时初始化 |
 | [source-driven-development](skills/source-driven-development/SKILL.md)     | 依据官方来源验证框架或库相关决策         | 需要当前、可引用的权威资料时       |
 | [spec-driven-development](skills/spec-driven-development/SKILL.md)         | 生成目标、约束、验收标准与边界明确的规范 | 用户明确需要功能规范时             |
 | [planning-and-task-breakdown](skills/planning-and-task-breakdown/SKILL.md) | 从规范生成依赖排序的实施计划             | 用户明确需要持久化计划或任务清单时 |
@@ -274,7 +275,7 @@ Codex 通过 `.codex-plugin/plugin.json` 直接读取根目录下的 `skills/` �
 
 ```
 zflow/
-├── skills/                            # 14 个按需加载的专业技能
+├── skills/                            # 15 个按需加载的专业技能
 ├── agents/                            # 2 个专业审查角色
 ├── references/                        # 6 个共享参考资料
 ├── commands/                          # 3 个 Antigravity CLI 命令
