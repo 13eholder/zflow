@@ -15,16 +15,16 @@
     {
       "id": 1,
       "kind": "execution",
-      "prompt": "项目开始，使用 init-agent-harness 初始化这个仓库的智能体文档。必须提取七类知识；只整理文档，不修改实现。",
+      "prompt": "项目开始，使用 init-agent-harness 初始化这个仓库的智能体文档。必须提取八类知识；只整理文档，不修改实现。",
       "files": ["init-agent-harness"],
-      "expected_output": "基于已有证据建立简短入口和专题导航，覆盖七类知识并明确规范与实现冲突",
+      "expected_output": "基于已有证据建立简短入口和专题导航，覆盖八类知识并明确规范与实现冲突",
       "expectations": [
-        "新建知识文档位于 .agents/docs/，根 AGENTS.md 链接其 index.md；已有 notes/design.md 保持为权威来源，不复制为平行规范",
-        "设计文档、编程规范、架构设计、模块依赖、错误处理、测试原则、命名规范都有可定位的调查结果与状态",
+        "新建知识文档位于 .agents/context/ 的 convention/ 或 arch/，根 AGENTS.md 代码导航表格可达；已有 notes/design.md 保持为权威来源，不复制为平行规范",
+        "设计文档、编程规范、架构设计、模块依赖、错误处理、测试原则、命名规范、提交约定都有可定位的调查结果与状态",
         "复用 notes/design.md，保留底层 I/O 错误的规范，指出 storage.rs 将错误统一转换为 NotFound 的冲突而不修改实现",
         "不将未决定的自动重试策略写成已接受规范，不凭空补全并发或 ownership 政策",
         "保留 src/AGENTS.md 的局部 unsafe 约束，不将其无依据地扩大到整个仓库",
-        "入口按任务给出阅读条件和链接，本地链接有效，两个任务走查能找到约束或明确缺口",
+        "AGENTS.md 代码导航表格按任务给出读取条件和链接，本地链接有效，两个任务走查能找到约束或明确缺口",
         "记录 cargo test 的来源和实际执行状态，不声称未执行的检查已经通过"
       ]
     },
